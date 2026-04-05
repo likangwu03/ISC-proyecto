@@ -20,6 +20,7 @@ public abstract class GAction : MonoBehaviour
     public Dictionary<string, int> preconditions;
     // Diccionario de efectos
     public Dictionary<string, int> effects;
+
     // Acceso al inventario
     public GInventory inventory;
     // Estado del agente
@@ -77,11 +78,30 @@ public abstract class GAction : MonoBehaviour
 
     public abstract bool PrePerform();
     public abstract void Perform();
-    public abstract bool PostPerform();
+    public virtual bool PostPerform()
+    {
+        ApplyEffect();
+        return true;
+    }
 
     public virtual bool IsDone()
     {
         return true;
+    }
+
+    public void ApplyEffect()
+    {
+        foreach (WorldState state in afterEffects)
+        {
+            if(state.isBelief)
+            {
+                beliefs.ModifyState(state.key, state.value);
+            }
+            else
+            {
+                GWorld.Instance.GetWorld().ModifyState(state.key, state.value);
+            }
+        }
     }
 
 }
