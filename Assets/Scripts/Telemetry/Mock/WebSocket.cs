@@ -26,7 +26,7 @@ public class WebSocketClient : MonoBehaviour
 
     void Start()
     {
-        ws = new WebSocket("ws://localhost:8000/ws");
+        ws = new WebSocket("ws://127.0.0.1:8000/ws");
 
         ws.OnOpen += (sender, e) =>
         {
@@ -41,6 +41,7 @@ public class WebSocketClient : MonoBehaviour
             // Handle the response from FastAPI
         }
         ;
+
         ws.Connect();
     }
 
