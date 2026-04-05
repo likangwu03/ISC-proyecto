@@ -5,10 +5,14 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    // Queue of patients
+
     public Queue<GameObject> patients = new Queue<GameObject>();
-    // Queue of cubicles
-    public Queue<GameObject> cubicles = new Queue<GameObject>();
+
+    public Queue<GameObject> doctors = new Queue<GameObject>();
+
+    public Queue<GameObject> waitingSpots = new Queue<GameObject>();
+
+    public Queue<GameObject> registers = new Queue<GameObject>();
 
     void Awake()
     {
@@ -27,17 +31,36 @@ public class GameManager : MonoBehaviour
     private void init()
     {
         Time.timeScale = 5.0f;
-        //GWorld.Instance.GetWorld().Clear();
+        GameObject[] ListWaitingAreas = GameObject.FindGameObjectsWithTag("WaitingSpot");
+        foreach (GameObject c in ListWaitingAreas)
+        {
+            waitingSpots.Enqueue(c);
+        }
+        if (ListWaitingAreas.Length > 0)
+        {
+            GWorld.Instance.GetWorld().ModifyState("AvailableWaitingSpot", ListWaitingAreas.Length);
+        }
 
-        GameObject[] cubes = GameObject.FindGameObjectsWithTag("Cubicle");
-        foreach (GameObject c in cubes)
+        GameObject[] ListDoctors = GameObject.FindGameObjectsWithTag("Doctor");
+        foreach (GameObject c in ListDoctors)
         {
-            cubicles.Enqueue(c);
+            doctors.Enqueue(c);
         }
-        if (cubes.Length > 0)
+        if (ListDoctors.Length > 0)
         {
-            GWorld.Instance.GetWorld().ModifyState("FreeCubicle", cubes.Length);
+            GWorld.Instance.GetWorld().ModifyState("AvailableDoctor", ListDoctors.Length);
         }
+
+        GameObject[] ListRegisters = GameObject.FindGameObjectsWithTag("Register");
+        foreach (GameObject c in ListRegisters)
+        {
+            registers.Enqueue(c);
+        }
+        if (ListRegisters.Length > 0)
+        {
+            GWorld.Instance.GetWorld().ModifyState("AvailableRegister", ListRegisters.Length);
+        }
+
     }
 
     public void RestartGame()
@@ -45,30 +68,50 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-
-    // Add patient
     public void AddPatient(GameObject p)
     {
         patients.Enqueue(p);
     }
 
-    // Remove patient
     public GameObject RemovePatient()
     {
         if (patients.Count == 0) return null;
         return patients.Dequeue();
     }
 
-    // Add cubicle
-    public void AddCubicle(GameObject p)
+    public void AddDoctor(GameObject d)
     {
-        cubicles.Enqueue(p);
+        doctors.Enqueue(d);
     }
 
-    // Remove cubicle
-    public GameObject RemoveCubicle()
+    public GameObject GetDoctor()
     {
-        if (cubicles.Count == 0) return null;
-        return cubicles.Dequeue();
+        if (doctors.Count == 0) return null;
+        return doctors.Dequeue();
     }
+
+
+    public void AddWaitingSpot(GameObject d)
+    {
+        waitingSpots.Enqueue(d);
+    }
+
+    public GameObject GetWaitingSpot()
+    {
+        if (waitingSpots.Count == 0) return null;
+        return waitingSpots.Dequeue();
+    }
+
+
+    public void AddRegister(GameObject d)
+    {
+        registers.Enqueue(d);
+    }
+
+    public GameObject GetRegister()
+    {
+        if (registers.Count == 0) return null;
+        return registers.Dequeue();
+    }
+
 }

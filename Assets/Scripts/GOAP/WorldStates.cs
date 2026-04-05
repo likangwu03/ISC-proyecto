@@ -5,6 +5,7 @@ public class WorldState
 {
     public string key;
     public int value;
+    public bool isBelief;
 }
 
 public class WorldStates
