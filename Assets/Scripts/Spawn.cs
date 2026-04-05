@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 
-public class Spawn : MonoBehaviour {
+public class Spawn : MonoBehaviour
+{
 
-    // Grab our prefab
     public GameObject patientPrefab;
-    // Number of patients to spawn
-    public int numPatients;
 
-    void Start() {
+    // Tiempo inicial antes del primer spawn
+    [SerializeField] private float initialDelay = 5f;
 
-        Invoke("SpawnPatient", 5.0f);
+    // Intervalo de spawn configurable
+    [SerializeField] private float minSpawnTime = 15f;
+    [SerializeField] private float maxSpawnTime = 17f;
+
+    void Start()
+    {
+        Invoke(nameof(SpawnPatient), initialDelay);
     }
 
-    void SpawnPatient() {
+    void SpawnPatient()
+    {
 
-        // Instantiate numPatients at the spawner
-        Instantiate(patientPrefab, this.transform.position, Quaternion.identity);
-        // Invoke this method at random intervals
-        Invoke("SpawnPatient", Random.Range(8.0f, 10.0f));
-    }
+        Instantiate(patientPrefab, transform.position, Quaternion.identity);
 
-    // Update is called once per frame
-    void Update() {
-
+        float nextTime = Random.Range(minSpawnTime, maxSpawnTime);
+        Invoke(nameof(SpawnPatient), nextTime);
     }
 }

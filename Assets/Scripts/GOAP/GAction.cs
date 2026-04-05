@@ -67,11 +67,22 @@ public abstract class GAction : MonoBehaviour
     {
         foreach (KeyValuePair<string, int> p in preconditions)
         {
-            if (!(conditions.ContainsKey(p.Key) && conditions[p.Key] >= p.Value))
-            {
-                return false;
-            }
 
+            if (conditions.ContainsKey(p.Key))
+            {
+                if(p.Value <= 0)
+                {
+                    if (conditions[p.Key] > 0) return false;
+                }
+                else
+                {
+                    if (conditions[p.Key] < p.Value) return false;
+                }
+            }
+            else
+            {
+                if(p.Value > 0) {  return false; }
+            }
         }
         return true;
     }

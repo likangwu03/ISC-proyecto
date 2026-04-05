@@ -2824,6 +2824,8 @@ GameObject:
   - component: {fileID: 1760531119774821127}
   - component: {fileID: -8859455897341622553}
   - component: {fileID: 2499324350551520846}
+  - component: {fileID: -5588418374256022805}
+  - component: {fileID: -7597213607122545292}
   m_Layer: 0
   m_Name: Patient
   m_TagString: Untagged
@@ -2857,11 +2859,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3
+  m_Speed: 2
   m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 5
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -2902,9 +2904,9 @@ MonoBehaviour:
   - key: AvailableRegister
     value: 1
     isBelief: 0
-  - key: AvailableWaitingSpot
-    value: 1
-    isBelief: 0
+  - key: isWaiting
+    value: 0
+    isBelief: 1
   afterEffects:
   - key: hasRegistered
     value: 1
@@ -2952,13 +2954,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Action
   cost: 1
-  duration: 5
+  duration: 15
   preConditions:
   - key: AvailableDoctor
     value: 1
     isBelief: 0
   - key: hasRegistered
     value: 1
+    isBelief: 1
+  - key: Waiting
+    value: 0
     isBelief: 1
   afterEffects:
   - key: isTreated
@@ -2981,18 +2986,58 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Go To Waiting Room
   cost: 1
-  duration: 0
+  duration: 1
   preConditions:
   - key: AvailableWaitingSpot
     value: 1
     isBelief: 0
+  - key: isWaiting
+    value: 0
+    isBelief: 1
   afterEffects:
   - key: isWaiting
     value: 1
-    isBelief: 0
+    isBelief: 1
   running: 0
   target: {fileID: 0}
   targetTag: 
+--- !u!114 &-5588418374256022805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881807149238628900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ce8d09e5c4f8684db3c65508231a11d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisAgent: {fileID: 0}
+--- !u!114 &-7597213607122545292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881807149238628900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b36c119478c3c3c4abf54162be962aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Action
+  cost: 1
+  duration: 0
+  preConditions:
+  - key: isWaiting
+    value: 1
+    isBelief: 1
+  afterEffects:
+  - key: isWaiting
+    value: -1
+    isBelief: 1
+  running: 0
 --- !u!1 &7927236269272520591
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ public class GInventory {
     public List<GameObject> items = new List<GameObject>();
 
     public void AddItem(GameObject i) {
-        items.Add(i);
+        if(i != null) { items.Add(i);}
     }
 
     public GameObject FindItemWithTag(string tag) {
@@ -32,7 +32,7 @@ public class GInventory {
                 break;
             }
         }
-        if (indexToRemove >= 1) {
+        if (indexToRemove >= 0) {
             items.RemoveAt(indexToRemove);
         }
     }

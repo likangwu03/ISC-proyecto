@@ -5,7 +5,7 @@
         // Call the base start
         base.Start();
         // Set up the subgoal "isWaiting"
-        SubGoal s1 = new SubGoal("isWaiting", 1, -1);
+        SubGoal s1 = new SubGoal("isWaiting", 1, 1);
         // Add it to the goals
         goals.Add(s1, 1);
 

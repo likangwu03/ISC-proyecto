@@ -132,10 +132,12 @@ public class GPlanner {
                 //add the effects of this node to the nodes states to reflect what
                 //the world would look like if this node's action were executed
                 foreach (KeyValuePair<string, int> eff in action.effects) {
-
                     if (!currentState.ContainsKey(eff.Key)) {
-
                         currentState.Add(eff.Key, eff.Value);
+                    }
+                    else
+                    {
+                        currentState[eff.Key] += eff.Value;
                     }
                 }
 
@@ -182,10 +184,12 @@ public class GPlanner {
     private bool GoalAchieved(Dictionary<string, int> goal, Dictionary<string, int> state) {
 
         foreach (KeyValuePair<string, int> g in goal) {
-
-            if (!state.ContainsKey(g.Key)) {
-
-                return false;
+            if (state.ContainsKey(g.Key)) {
+                if(g.Value <= 0 || g.Value > state[g.Key]) return false;
+            }
+            else
+            {
+                if (g.Value > 0) return false;
             }
         }
         return true;

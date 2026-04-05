@@ -19,7 +19,7 @@
 
         inventory.RemoveItem(target);
 
-        beliefs.ModifyState("isCured", 1);
+        beliefs.ModifyState("isTreated", 1);
 
         return true;
     }

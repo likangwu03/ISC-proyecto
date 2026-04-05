@@ -6,9 +6,8 @@ public class CameraSwitcher : MonoBehaviour
     public GameObject cameraFree;
     void Start()
     {
-        // Solo activamos la cámara de primera persona al inicio
-        cameraFP.SetActive(true);
-        cameraFree.SetActive(false);
+        cameraFP.SetActive(false);
+        cameraFree.SetActive(true);
     }
 
     void Update()

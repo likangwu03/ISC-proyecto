@@ -34,13 +34,12 @@ public class WorldStates
         if (HasState(key))
         {
             states[key] += value;
-            // Si es menor o igual a cero, eliminarlo
             if (states[key] <= 0)
             {
                 RemoveState(key);
             }
         }
-        else
+        else if(value > 0)
         {
             AddState(key, value);
         }

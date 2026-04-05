@@ -12,6 +12,7 @@
 
     public override bool PostPerform() {
         ApplyEffect();
+        inventory.RemoveItem(target);
         GameManager.Instance.AddRegister(target);
         GWorld.Instance.GetWorld().ModifyState("AvailableRegister", 1);
 
