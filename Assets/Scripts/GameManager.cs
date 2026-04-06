@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             init();
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void init()
     {
-        Time.timeScale = 5.0f;
+        Cursor.visible = false;
         GameObject[] ListWaitingAreas = GameObject.FindGameObjectsWithTag("WaitingSpot");
         foreach (GameObject c in ListWaitingAreas)
         {
@@ -112,6 +112,15 @@ public class GameManager : MonoBehaviour
     {
         if (registers.Count == 0) return null;
         return registers.Dequeue();
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GWorld.Instance.GetWorld().Clear();
+            SceneManager.LoadScene("Menu");
+        }
     }
 
 }
