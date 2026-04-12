@@ -1,5 +1,3 @@
-# TODO: Añadir último tick al estado actual cuando la app se corta, para los pacientes que estén activos ese momento
-#TODO: cuando cambia el doctor / finaliza el tratamiento, actualizar con el valor relativo de tiempo y hacer la suma
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets, QtCore
 import pandas as pd
@@ -70,7 +68,9 @@ patient_state_time = dict()         # Stores the time each patient remains in ea
 
 patient_assigned_doctors = dict()   # Stores the doctor(s) a certain patient may have been attended by
 
-doctor_patient_time = dict()        # Stores the time each doctor has a patient assigned
+doctor_patient_time = dict()        # Stores the timestamps each doctor has a patient assigned
+
+doctor_patient_acum = dict()        # Stores the total time each doctor has a patient assigned (required because of having to take into account transitions)
 
 patient_last_values = dict()        # For each patient, stores last state and time (ms) received
 
@@ -108,12 +108,12 @@ def add_new_patient(patient_priority):
     axis = plot.getAxis('left')
     axis.setTicks([[(idx, pname) for idx, pname in enumerate(patients_data.keys())]])
 
-def get_next_state(last_state):
-    state_index = states_list.index(last_state)
+def get_next_state(cur_state):
+    state_index = states_list.index(cur_state)
     return states_list[(state_index+1)%len(states_list)]
 
-def get_previous_state(last_state):
-    state_index = states_list.index(last_state)
+def get_previous_state(cur_state):
+    state_index = states_list.index(cur_state)
     return states_list[(state_index-1)%len(states_list)]
 
 def modifyValues():
@@ -122,6 +122,7 @@ def modifyValues():
     cur_relative_time = get_relative_time(cur_time)
     
     for (i, (name, state)) in enumerate(patients_data.items()):
+        
         last_state, last_time = patient_last_values[name]
         last_relative_time = get_relative_time(last_time)
         cur_patient_priority = patients_priority[name]
@@ -147,8 +148,17 @@ def modifyValues():
                         patient_state = patients_data[patient_name]
                         free_doc = cur_doc
                         patients_data[patient_name] = get_previous_state(patient_state)
+                        
                         doctor_patient_time[free_doc][patient_name].append(cur_relative_time)
+                        patient_last_value = doctor_patient_time[free_doc][patient_name][-2]
+                        
+                        doctor_patient_acum[free_doc][patient_name] += cur_relative_time - patient_last_value
+
                         old_patient = patient_name
+                        
+                        print(f"[{cur_relative_time}] Le roban el doctor {free_doc} a {old_patient} para dárselo a {name}")
+                        
+                        break
                         
                 if old_patient != "":
                     patient_assigned_doctors.pop(old_patient)
@@ -158,32 +168,45 @@ def modifyValues():
         
             if free_doc not in doctor_patient_time:                     # Otherwise, the patient goes to the doctor's
                 doctor_patient_time[free_doc] = dict()
+                doctor_patient_acum[free_doc] = dict()
             
             if name not in doctor_patient_time[free_doc]:
                 doctor_patient_time[free_doc][name] = list()
-                    
-            doctor_patient_time[free_doc][name].append(cur_relative_time)
+                doctor_patient_acum[free_doc][name] = 0
             
             if name not in patient_assigned_doctors:
                 patient_assigned_doctors[name] = list()
-                
+            
+            doctor_patient_time[free_doc][name].append(cur_relative_time)
             patient_assigned_doctors[name].append(free_doc)
             doctor_patient_dict[free_doc] = name
-            patients_data[name] = get_next_state(last_state)
+            patients_data[name] = get_next_state(state) 
             
+        elif state != states_list[-1]:
             
-        elif state != states_list[-1] and random.uniform(1, 20) > 13:
+            state_transition = False
             
-            if get_next_state(state) == states_list[-1]:
+            if random.uniform(1, 20) > 13:
+                patients_data[name] = get_next_state(state)
+                state_transition=True 
+            
+            if get_next_state(state) == states_list[-1]:                    # If the patient is being treated
             
                 cur_doc = patient_assigned_doctors[name][-1]
-                doctor_patient_dict.pop(cur_doc)
-                patient_assigned_doctors.pop(name)
                 
-            patients_data[name] = get_next_state(state)  
-    
-    if random.uniform(1, 20) > 17: #and len(patients_data)<8:
-        priority = round(random.uniform(1,4))
+                doctor_patient_time[cur_doc][name].append(cur_relative_time)
+            
+                patient_last_value = doctor_patient_time[cur_doc][name][-2]
+                    
+                doctor_patient_acum[cur_doc][name] += cur_relative_time - patient_last_value
+                
+                if state_transition:
+                    doctor_patient_dict.pop(cur_doc)
+                    patient_assigned_doctors.pop(name)
+                    
+                          
+    if random.uniform(1, 20) > 17:
+        priority = round(random.uniform(4,7))
         add_new_patient(priority)
     
 def update():    
@@ -253,11 +276,9 @@ def update():
                                                                                     # previous one finishes
                 bars[name].append(new_bar_graph)
                 plot.addItem(new_bar_graph)
-                patient_last_values[name] = (state, cur_time)
         
         else:
             init_patient_state_time(name, 0)
-            patient_last_values[name] = (state, cur_time)
             
             bar_graph = pg.BarGraphItem(
                     x0 = [cur_relative_time],
@@ -270,6 +291,8 @@ def update():
 
             bars[name].append(bar_graph)
             plot.addItem(bar_graph)
+        
+        patient_last_values[name] = (state, cur_time)
         
     plot.setXRange(0, cur_relative_time + 1000)
 
@@ -309,13 +332,16 @@ timer.start(500)  # update every second
 
 app.exec()
 
+final_time = time.time() * 1000
+
+update()
+
 timeline_df = pd.DataFrame({p: {s: times for s, times in states.items()} for p, states in patient_state_time.items()})
 timeline_df
 timeline_df.to_csv("patients_timeline.csv")
+print(timeline_df)
 
-doctor_patient_time_sum = {k:{vk: sum(vv) for vk, vv in v.items()} for k,v in doctor_patient_time.items()}
-print(doctor_patient_time_sum)
-doctors_df = pd.DataFrame(doctor_patient_time_sum).transpose()
+doctors_df = pd.DataFrame(doctor_patient_acum).transpose()
 doctors_df.to_csv("doctors_patients.csv")
 
 priorities_df = pd.DataFrame([patients_priority])
