@@ -5,11 +5,7 @@ simulation_df = pd.read_csv("patients_timeline.csv", index_col=0).transpose().fi
 priorities_df = pd.read_csv("patients_priority.csv").transpose()
 doctors_df = pd.read_csv("doctors_patients.csv", index_col=0).transpose().fillna(0)
 
-print("="*50)
-print(simulation_df)
-print("="*50)
 print(doctors_df)
-print("="*50)
 print(pd.merge(simulation_df, doctors_df, left_index=True, right_index=True).head(4))
 
 states_list = simulation_df.columns
@@ -79,5 +75,12 @@ for p in range(len(simulation_df.index)):
     for state_index, total_time in acum_state_index.items():                    # For each patient and state, the total time is set
         treated_results[patient_name][states_list[state_index]] = total_time
             
-print(treated_results)
-print(pd.DataFrame(treated_results).transpose())
+#print(treated_results)
+
+df_results = pd.DataFrame(treated_results).transpose()
+
+df_results["Prioridad"] = priorities_df
+
+print(df_results)
+
+df_results.to_csv("aggregated_results.csv")

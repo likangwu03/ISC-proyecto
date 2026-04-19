@@ -278,7 +278,7 @@ def update():
                 plot.addItem(new_bar_graph)
         
         else:
-            init_patient_state_time(name, 0)
+            init_patient_state_time(name, cur_relative_time)
             
             bar_graph = pg.BarGraphItem(
                     x0 = [cur_relative_time],
@@ -343,6 +343,7 @@ print(timeline_df)
 
 doctors_df = pd.DataFrame(doctor_patient_acum).transpose()
 doctors_df.to_csv("doctors_patients.csv")
+print(doctors_df)
 
 priorities_df = pd.DataFrame([patients_priority])
 priorities_df.index.name="Prioridad"

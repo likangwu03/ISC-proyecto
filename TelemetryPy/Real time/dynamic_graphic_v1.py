@@ -16,10 +16,6 @@ def init_patient_state_dict(patient_name, state, ms_time):
     patient_state_time[patient_name] = dict()
     patient_state_time[patient_name][state] = list()
     patient_state_time[patient_name][state].append(ms_time)
-    
-    """for state in states_list:
-        patient_state_time[patient_name][state] = list()          # For each state, the relative times are stored
-        patient_state_time[patient_name][state].append(ms_time)"""
 
 app = QtWidgets.QApplication([])
 
@@ -142,18 +138,6 @@ def update():
     for (i, (name, state)) in enumerate(patients_data.items()):
         
         if state == states_list[-1]:
-            """for bar_i in bars[i]:
-                last_bar = bar_i  # remove from our list
-                plot.removeItem(last_bar)
-            bars[i][-1].setOpts(
-                    y=0.0001
-                )
-            patients_data.pop(name)
-                
-            last_bar = bars[i].pop()  # remove from our list
-            plot.removeItem(last_bar)  # remove from plot
-            
-            axis.setTicks([[(i, name) for i, name in enumerate(patients_data.keys())]]) """
             continue
         
         cur_brush = state_to_brush(state)
@@ -216,77 +200,6 @@ plot.showGrid(x=False, y=True)
 
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(200)  # update every second
+timer.start(200)
 
 app.exec()
-
-
-"""data = {
-    "Barrel1": [0, 1.5, 2, 6],
-    "Barrel2": [0.2, 0.9, 3, 7],
-    "Barrel3": [1, 1.5, 4.2, 8]
-}
-
-brushes = ["b", "r", "y", "w"]
-"""
-
-"""
-for i, (name, barrel_data) in enumerate(data.items()):
-    
-    print(type(barrel_data), barrel_data)
-    
-    bars[i] = list()
-    
-    for j in range(len(barrel_data)-1):
-        
-        start = barrel_data[j]
-        end = barrel_data[j+1]
-        brush = brushes[j%4]
-        
-        print(i, j, start, end, brush)
-        
-        bar_graph = pg.BarGraphItem(
-            x0 = [start],
-            x1 = [end],
-            #width = [end-start-1],
-            height=[0.8],
-            brush=brush,
-            y = [i],
-            pen=pg.mkPen('k', width=2)
-        )
-
-        bars[i].append(bar_graph)
-        plot.addItem(bar_graph)
-
-def update():
-
-    for name, barrel_data in data.items():
-        barrel_data[-1] += pepe#.append(pepe)
-    
-    for ((name, barrel_data), (bar_number, graph_bar)) in zip(data.items(), bars.items()):
-        start = barrel_data[-2]
-        end = barrel_data[-1]
-        graph_bar[-1].setOpts(
-            x0 = [start],
-            x1 = [end]
-        )
-    
-    for (barrel_number, plt_bars) in bars.items():
-        start = data
-        plt_bars[-1].setOpts()
-        
-    for (bar, (name, barrel_data)) in zip(bars, data.items()):
-        for j in range(len(barrel_data)-1):
-        
-            start = barrel_data[j]
-            end = barrel_data[j+1]
-            brush = brushes[j%4]
-            
-            print(i, j, start, end, brush)
-            
-            bar.setOpts(x0 = [start],
-                x1 = [end])
-    
-    pepe += 3
-        
-"""
