@@ -10,11 +10,11 @@ public class UpdateWorld : MonoBehaviour {
     void LateUpdate() {
 
         // Dictionary of states
-        Dictionary<string, int> worldStates = GWorld.Instance.GetWorld().GetStates();
+        Dictionary<WorldStateDefinition, int> worldStates = GWorld.Instance.GetWorld().GetStates();
         // Clear out the states text
         states.text = "";
         // Cycle through them all and store in states.text
-        foreach (KeyValuePair<string, int> s in worldStates) {
+        foreach (KeyValuePair<WorldStateDefinition, int> s in worldStates) {
 
             states.text += s.Key + ", " + s.Value + "\n";
         }

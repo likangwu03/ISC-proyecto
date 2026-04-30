@@ -14,6 +14,15 @@ public class GameManager : MonoBehaviour
 
     public Queue<GameObject> registers = new Queue<GameObject>();
 
+    [SerializeField]
+    private WorldStateDefinition WaitingSpot;
+    [SerializeField]
+    private WorldStateDefinition Doctor;
+    [SerializeField]
+    private WorldStateDefinition Register;
+
+
+
     void Awake()
     {
         if (Instance == null)
@@ -38,7 +47,7 @@ public class GameManager : MonoBehaviour
         }
         if (ListWaitingAreas.Length > 0)
         {
-            GWorld.Instance.GetWorld().ModifyState("AvailableWaitingSpot", ListWaitingAreas.Length);
+            GWorld.Instance.GetWorld().ModifyState(WaitingSpot, ListWaitingAreas.Length);
         }
 
         GameObject[] ListDoctors = GameObject.FindGameObjectsWithTag("Doctor");
@@ -48,7 +57,7 @@ public class GameManager : MonoBehaviour
         }
         if (ListDoctors.Length > 0)
         {
-            GWorld.Instance.GetWorld().ModifyState("AvailableDoctor", ListDoctors.Length);
+            GWorld.Instance.GetWorld().ModifyState(Doctor, ListDoctors.Length);
         }
 
         GameObject[] ListRegisters = GameObject.FindGameObjectsWithTag("Register");
@@ -58,7 +67,7 @@ public class GameManager : MonoBehaviour
         }
         if (ListRegisters.Length > 0)
         {
-            GWorld.Instance.GetWorld().ModifyState("AvailableRegister", ListRegisters.Length);
+            GWorld.Instance.GetWorld().ModifyState(Register, ListRegisters.Length);
         }
 
     }

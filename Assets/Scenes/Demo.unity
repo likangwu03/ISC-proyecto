@@ -10025,6 +10025,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e3dc731b1a70498305b88b93a05d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WaitingSpot: {fileID: 11400000, guid: b86e11188a7dc31459b2b9ab81920004, type: 2}
+  Doctor: {fileID: 11400000, guid: 0a1728740c2d59748a8b871d3b30dd37, type: 2}
+  Register: {fileID: 11400000, guid: c2bbe58bc723daa4d91c96077d245b80, type: 2}
 --- !u!4 &798971952
 Transform:
   m_ObjectHideFlags: 0

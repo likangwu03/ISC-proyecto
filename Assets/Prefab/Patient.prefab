@@ -2885,6 +2885,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actions: []
   currentAction: {fileID: 0}
+  isWaiting: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
+  isTreated: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
+  isHome: {fileID: 11400000, guid: 2300404ba6e58b9458f56ed2795a2d08, type: 2}
+  hasRegistered: {fileID: 11400000, guid: d4abbd75a58373943a24d37f7158aeaf, type: 2}
 --- !u!114 &2735964536597517985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2901,19 +2905,17 @@ MonoBehaviour:
   cost: 1
   duration: 3
   preConditions:
-  - key: AvailableRegister
-    value: 1
-    isBelief: 0
-  - key: isWaiting
-    value: 0
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: c2bbe58bc723daa4d91c96077d245b80, type: 2}
+  - value: 0
+    def: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
   afterEffects:
-  - key: hasRegistered
-    value: 1
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: d4abbd75a58373943a24d37f7158aeaf, type: 2}
   running: 0
   target: {fileID: 0}
   targetTag: 
+  register: {fileID: 11400000, guid: c2bbe58bc723daa4d91c96077d245b80, type: 2}
 --- !u!114 &1760531119774821127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2930,13 +2932,11 @@ MonoBehaviour:
   cost: 1
   duration: 2
   preConditions:
-  - key: isTreated
-    value: 1
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
   afterEffects:
-  - key: isHome
-    value: 1
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: 2300404ba6e58b9458f56ed2795a2d08, type: 2}
   running: 0
   target: {fileID: 0}
   targetTag: Home
@@ -2956,22 +2956,21 @@ MonoBehaviour:
   cost: 1
   duration: 12
   preConditions:
-  - key: AvailableDoctor
-    value: 1
-    isBelief: 0
-  - key: hasRegistered
-    value: 1
-    isBelief: 1
-  - key: isWaiting
-    value: 0
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: 0a1728740c2d59748a8b871d3b30dd37, type: 2}
+  - value: 1
+    def: {fileID: 11400000, guid: d4abbd75a58373943a24d37f7158aeaf, type: 2}
+  - value: 0
+    def: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
   afterEffects:
-  - key: isTreated
-    value: 1
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
   running: 0
   target: {fileID: 0}
   targetTag: 
+  doctor: {fileID: 11400000, guid: 0a1728740c2d59748a8b871d3b30dd37, type: 2}
+  treatingPatient: {fileID: 11400000, guid: d540a29bf64c0a1479ebb7efc62fce94, type: 2}
+  isTreated: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
 --- !u!114 &2499324350551520846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2988,19 +2987,17 @@ MonoBehaviour:
   cost: 1
   duration: 1
   preConditions:
-  - key: AvailableWaitingSpot
-    value: 1
-    isBelief: 0
-  - key: isWaiting
-    value: 0
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: b86e11188a7dc31459b2b9ab81920004, type: 2}
+  - value: 0
+    def: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
   afterEffects:
-  - key: isWaiting
-    value: 1
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
   running: 0
   target: {fileID: 0}
   targetTag: 
+  waitingSpot: {fileID: 11400000, guid: b86e11188a7dc31459b2b9ab81920004, type: 2}
 --- !u!114 &-5588418374256022805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3013,7 +3010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce8d09e5c4f8684db3c65508231a11d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thisAgent: {fileID: 1705106463}
+  thisAgent: {fileID: 0}
 --- !u!114 &-7597213607122545292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3030,14 +3027,13 @@ MonoBehaviour:
   cost: 1
   duration: 0
   preConditions:
-  - key: isWaiting
-    value: 1
-    isBelief: 1
+  - value: 1
+    def: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
   afterEffects:
-  - key: isWaiting
-    value: -1
-    isBelief: 1
+  - value: -1
+    def: {fileID: 11400000, guid: 46cf09f1ab887924a9010d07c397ee5c, type: 2}
   running: 0
+  availableWaitingSpot: {fileID: 0}
 --- !u!1 &7927236269272520591
 GameObject:
   m_ObjectHideFlags: 0

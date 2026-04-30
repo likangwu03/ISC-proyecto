@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class SubGoal{
 
-    public Dictionary<string, int> sGoals;
+    public Dictionary<WorldStateDefinition, int> sGoals;
     // -1 = infinito
     public int repeat;
 
-    public SubGoal(string s, int i,int repeat = 0) {
+    public SubGoal(WorldStateDefinition s, int i,int repeat = 0) {
 
-        sGoals = new Dictionary<string, int>
+        sGoals = new Dictionary<WorldStateDefinition, int>
         {
             { s, i }
         };
@@ -20,7 +20,7 @@ public class SubGoal{
 
     public SubGoal(int repeat = 0)
     {
-        sGoals = new Dictionary<string, int>();
+        sGoals = new Dictionary<WorldStateDefinition, int>();
         this.repeat = repeat;
     }
 }
@@ -28,25 +28,22 @@ public class SubGoal{
 
 public class GAgent : MonoBehaviour
 {
-    // Almacena nuestra lista de acciones
-    public List<GAction> actions = new List<GAction>();
-    // Diccionario de subobjetivos
+    public List<GAction> actions = new();
+    public Dictionary<SubGoal, int> goals = new();
 
-    public Dictionary<SubGoal, int> goals = new Dictionary<SubGoal, int>();
-    // Inventario
-    public GInventory inventory = new GInventory();
-    // Creencias
-    public WorldStates beliefs = new WorldStates();
+    public GInventory inventory = new();
+    public WorldStates beliefs = new();
 
-    // Acceso al planificador
-    GPlanner planner;
-    // Cola de acciones
-    Queue<GAction> actionQueue;
-    // Acción actual
+    private GPlanner planner;
+
+    private Queue<GAction> actionQueue;
     public GAction currentAction;
-    // Subobjetivo actual
-    SubGoal currentGoal;
-    bool invoked = false;
+
+    private SubGoal currentGoal;
+
+    private bool invoked = false;
+    private bool needsReplan = false;
+
 
     public void Awake()
     {
@@ -55,11 +52,7 @@ public class GAgent : MonoBehaviour
 
     public void Start()
     {
-        GAction[] acts = GetComponents<GAction>();
-        foreach (GAction a in acts)
-        {
-            actions.Add(a);
-        }
+        actions.AddRange(GetComponents<GAction>());
     }
 
     public void CompleteAction()
@@ -67,29 +60,6 @@ public class GAgent : MonoBehaviour
         currentAction.running = false;
         currentAction.PostPerform();
         invoked = false;
-    }
-
-
-    void LateUpdate()
-    {
-        HandleCurrentAction();
-
-        if (currentAction != null && currentAction.running)
-            return;
-
-        if (actionQueue == null)
-            TryCreatePlan();
-
-        if (actionQueue == null)
-            return;
-
-        if (actionQueue.Count == 0)
-        {
-            FinishGoal();
-            return;
-        }
-
-        ExecuteNextAction();
     }
 
     void HandleCurrentAction()
@@ -100,20 +70,41 @@ public class GAgent : MonoBehaviour
         if (!currentAction.IsDone())
             return;
 
-        if (!invoked)
-        {
-            Invoke(nameof(CompleteAction), currentAction.duration);
-            invoked = true;
-        }
+        CompleteAction();
     }
 
-    void TryCreatePlan()
+
+    void LateUpdate()
     {
+        HandleCurrentAction();
+
+        if (currentAction == null)
+            Replan();
+
+        if (currentAction != null && currentAction.running)
+            return;
+
+        if (actionQueue == null || actionQueue.Count == 0)
+        {
+            FinishGoal();
+            return;
+        }
+
+        ExecuteNextAction();
+    }
+
+
+    void Replan()
+    {
+        needsReplan = false;
+        actionQueue = null;
+        currentGoal = null;
+
         var sortedGoals = goals.OrderByDescending(g => g.Value);
 
         foreach (var sg in sortedGoals)
         {
-            var plan = planner.plan(actions, sg.Key.sGoals, beliefs);
+            Queue<GAction> plan = planner.Plan(actions, sg.Key.sGoals, beliefs);
 
             if (plan == null)
                 continue;

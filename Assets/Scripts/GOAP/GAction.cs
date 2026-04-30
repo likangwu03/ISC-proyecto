@@ -16,10 +16,11 @@ public abstract class GAction : MonoBehaviour
     // Array de estados del mundo como efectos posteriores
     [SerializeField]
     protected WorldState[] afterEffects;
+
     // Diccionario de precondiciones
-    public Dictionary<string, int> preconditions;
+    public Dictionary<WorldStateDefinition, int> preconditions;
     // Diccionario de efectos
-    public Dictionary<string, int> effects;
+    public Dictionary<WorldStateDefinition, int> effects;
 
     // Acceso al inventario
     public GInventory inventory;
@@ -31,8 +32,8 @@ public abstract class GAction : MonoBehaviour
     // Constructor
     public GAction()
     {
-        preconditions = new Dictionary<string, int>();
-        effects = new Dictionary<string, int>();
+        preconditions = new Dictionary<WorldStateDefinition, int>();
+        effects = new Dictionary<WorldStateDefinition, int>();
     }
 
     protected virtual void Awake()
@@ -41,7 +42,7 @@ public abstract class GAction : MonoBehaviour
         {
             foreach (WorldState w in preConditions)
             {
-                preconditions.Add(w.key, w.value);
+                preconditions.Add(w.def, w.value);
             }
         }
 
@@ -49,7 +50,7 @@ public abstract class GAction : MonoBehaviour
         {
             foreach (WorldState w in afterEffects)
             {
-                effects.Add(w.key, w.value);
+                effects.Add(w.def, w.value);
             }
         }
 
@@ -63,9 +64,9 @@ public abstract class GAction : MonoBehaviour
     }
 
     // Comprueba si la acción es realizable dadas las condiciones del mundo y comparándolas con las precondiciones
-    public bool IsAhievableGiven(Dictionary<string, int> conditions)
+    public bool IsAhievableGiven(Dictionary<WorldStateDefinition, int> conditions)
     {
-        foreach (KeyValuePair<string, int> p in preconditions)
+        foreach (KeyValuePair<WorldStateDefinition, int> p in preconditions)
         {
 
             if (conditions.ContainsKey(p.Key))
@@ -89,6 +90,7 @@ public abstract class GAction : MonoBehaviour
 
     public abstract bool PrePerform();
     public abstract void Perform();
+    public virtual void Suspended() { }
     public virtual bool PostPerform()
     {
         ApplyEffect();
@@ -104,13 +106,13 @@ public abstract class GAction : MonoBehaviour
     {
         foreach (WorldState state in afterEffects)
         {
-            if(state.isBelief)
+            if(state.def.isBelief)
             {
-                beliefs.ModifyState(state.key, state.value);
+                beliefs.ModifyState(state.def, state.value);
             }
             else
             {
-                GWorld.Instance.GetWorld().ModifyState(state.key, state.value);
+                GWorld.Instance.GetWorld().ModifyState(state.def, state.value);
             }
         }
     }

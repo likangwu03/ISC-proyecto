@@ -1,8 +1,14 @@
-﻿public class Register : MoveAction
+﻿using UnityEngine;
+
+public class Register : MoveAction
 {
-    public override bool PrePerform() {
+
+    [SerializeField]
+    private WorldStateDefinition register;
+    public override bool PrePerform()
+    {
         target = GameManager.Instance.GetRegister();
-        GWorld.Instance.GetWorld().ModifyState("AvailableRegister", -1);
+        GWorld.Instance.GetWorld().ModifyState(register, -1);
 
         inventory.AddItem(target);
         if (target == null)
@@ -10,11 +16,12 @@
         return true;
     }
 
-    public override bool PostPerform() {
+    public override bool PostPerform()
+    {
         ApplyEffect();
         inventory.RemoveItem(target);
         GameManager.Instance.AddRegister(target);
-        GWorld.Instance.GetWorld().ModifyState("AvailableRegister", 1);
+        GWorld.Instance.GetWorld().ModifyState(register, 1);
 
         return true;
     }

@@ -1,35 +1,53 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
+
+
+[CreateAssetMenu(fileName = "WorldStateDefinition", menuName = "GOAP/World State Definition")]
+public class WorldStateDefinition : ScriptableObject
+{
+    public string key;
+    public bool isBelief;
+
+    public override bool Equals(object obj)
+    {
+        if (obj is WorldStateDefinition other)
+            return key == other.key;
+        return false;
+    }
+
+    public override int GetHashCode() => key != null ? key.GetHashCode() : 0;
+}
 
 [System.Serializable]
 public class WorldState
 {
-    public string key;
     public int value;
-    public bool isBelief;
+    public WorldStateDefinition def;
 }
+
 
 public class WorldStates
 {
-    private Dictionary<string, int> states;
+    private Dictionary<WorldStateDefinition, int> states;
 
     public WorldStates()
     {
-        states = new Dictionary<string, int>();
+        states = new Dictionary<WorldStateDefinition, int>();
     }
 
     // Comprobar si existe una clave
-    public bool HasState(string key)
+    public bool HasState(WorldStateDefinition key)
     {
         return states.ContainsKey(key);
     }
 
     // Añadir al diccionario
-    private void AddState(string key, int value)
+    private void AddState(WorldStateDefinition key, int value)
     {
         states.Add(key, value);
     }
 
-    public void ModifyState(string key, int value)
+    public void ModifyState(WorldStateDefinition key, int value)
     {
         if (HasState(key))
         {
@@ -46,19 +64,19 @@ public class WorldStates
     }
 
     // Método para eliminar un estado
-    public void RemoveState(string key)
+    public void RemoveState(WorldStateDefinition key)
     {
         if (HasState(key)) states.Remove(key);
     }
 
     // Establecer un estado
-    public void SetState(string key, int value)
+    public void SetState(WorldStateDefinition key, int value)
     {
         if (HasState(key)) states[key] = value;
         else AddState(key, value);
     }
 
-    public Dictionary<string, int> GetStates()
+    public Dictionary<WorldStateDefinition, int> GetStates()
     {
         return states;
     }

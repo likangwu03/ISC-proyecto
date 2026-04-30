@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ExitWaitingRoom : GAction
 {
+    [SerializeField]
+    private WorldStateDefinition availableWaitingSpot;
     public override bool PrePerform()
     {
         return true;
@@ -20,7 +22,7 @@ public class ExitWaitingRoom : GAction
         if (target != null)
         {
             GameManager.Instance.AddWaitingSpot(target);
-            GWorld.Instance.GetWorld().ModifyState("AvailableWaitingSpot", 1);
+            GWorld.Instance.GetWorld().ModifyState(availableWaitingSpot, 1);
             inventory.RemoveItem(target);
         }
 

@@ -1,38 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-// a node in the plan graph to be constructed
-public class Node {
-
-    //the parent node this node is connected to
+public class Node : IComparable<Node> { 
     public Node parent;
-    //how much it cost to get to this node
     public float cost;
-    //the state of the environment by the time the
-    //action assigned to this node is achieved
-    public Dictionary<string, int> state;
-    //the action this node represents in the plan
+    public Dictionary<WorldStateDefinition, int> state;
     public GAction action;
 
-    // Constructor
-    public Node(Node parent, float cost, Dictionary<string, int> allStates, GAction action) {
-
+    public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, GAction action) {
         this.parent = parent;
         this.cost = cost;
-        this.state = new Dictionary<string, int>(allStates);
+        this.state = new Dictionary<WorldStateDefinition, int>(allStates);
         this.action = action;
     }
 
-    // Overloaded Constructor
-    public Node(Node parent, float cost, Dictionary<string, int> allStates, Dictionary<string, int> beliefStates, GAction action) {
+    public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, Dictionary<WorldStateDefinition, int> beliefStates, GAction action) {
 
         this.parent = parent;
         this.cost = cost;
-        this.state = new Dictionary<string, int>(allStates);
+        this.state = new Dictionary<WorldStateDefinition, int>(allStates);
 
-        //as well as the world states add the agents beliefs as states that can be
-        //used to match preconditions
-        foreach (KeyValuePair<string, int> b in beliefStates) {
+        foreach (KeyValuePair<WorldStateDefinition, int> b in beliefStates) {
 
             if (!this.state.ContainsKey(b.Key)) {
 
@@ -41,156 +30,154 @@ public class Node {
         }
         this.action = action;
     }
+    public int CompareTo(Node other) => cost.CompareTo(other.cost);
+
 }
 
-public class GPlanner {
+public class MinHeap<T> where T : IComparable<T>
+{
+    private readonly List<T> _data = new List<T>();
 
-    public Queue<GAction> plan(List<GAction> actions, Dictionary<string, int> goal, WorldStates beliefStates) {
+    public int Count => _data.Count;
 
-        List<GAction> usableActions = new List<GAction>();
+    public void Push(T item)
+    {
+        _data.Add(item);
+        BubbleUp(_data.Count - 1);
+    }
 
-        //of all the actions available find the ones that can be achieved.
-        foreach (GAction a in actions) {
+    public T Pop()
+    {
+        T top = _data[0];
+        int last = _data.Count - 1;
+        _data[0] = _data[last];
+        _data.RemoveAt(last);
+        if (_data.Count > 0) SiftDown(0);
+        return top;
+    }
 
-            if (a.IsAchievable()) {
+    private void BubbleUp(int i)
+    {
+        while (i > 0)
+        {
+            int parent = (i - 1) / 2;
+            if (_data[i].CompareTo(_data[parent]) >= 0) break;
+            (_data[i], _data[parent]) = (_data[parent], _data[i]);
+            i = parent;
+        }
+    }
 
-                usableActions.Add(a);
+    private void SiftDown(int i)
+    {
+        int n = _data.Count;
+        while (true)
+        {
+            int smallest = i, l = 2 * i + 1, r = 2 * i + 2;
+            if (l < n && _data[l].CompareTo(_data[smallest]) < 0) smallest = l;
+            if (r < n && _data[r].CompareTo(_data[smallest]) < 0) smallest = r;
+            if (smallest == i) break;
+            (_data[i], _data[smallest]) = (_data[smallest], _data[i]);
+            i = smallest;
+        }
+    }
+}
+
+
+public class GPlanner
+{
+    public Queue<GAction> Plan(List<GAction> actions, Dictionary<WorldStateDefinition, int> goal, WorldStates beliefStates)
+    {
+
+        Node startNode = new Node(null, 0f, GWorld.Instance.GetWorld().GetStates(), beliefStates.GetStates(), null);
+
+        MinHeap<Node> openSet  = new();
+        HashSet<string> visited = new();
+
+        openSet.Push(startNode);
+        Node cheapestGoal = null;
+
+        while (openSet.Count > 0)
+        {
+            Node current = openSet.Pop();
+
+            // encontrrado
+            if (cheapestGoal != null && current.cost >= cheapestGoal.cost)
+                break;
+
+            string stateHash = HashState(current.state);
+            if (visited.Contains(stateHash))
+                continue;
+            visited.Add(stateHash);
+
+            foreach (GAction action in actions)
+            {
+                if (!action.IsAhievableGiven(current.state)) continue;
+
+                var nextState = new Dictionary<WorldStateDefinition, int>(current.state);
+                foreach (var eff in action.effects)
+                {
+                    if (!nextState.ContainsKey(eff.Key))
+                        nextState.Add(eff.Key, eff.Value);
+                    else
+                        nextState[eff.Key] += eff.Value;
+                }
+
+                var child = new Node(current, current.cost + action.cost, nextState, action);
+
+                if (GoalAchieved(goal, nextState))
+                {
+                    // Guardamos el más barato que llegue al objetivo
+                    if (cheapestGoal == null || child.cost < cheapestGoal.cost)
+                        cheapestGoal = child;
+                }
+                else
+                {
+                    openSet.Push(child);
+                }
             }
         }
 
-        //create the first node in the graph
-        List<Node> leaves = new List<Node>();
-        Node start = new Node(null, 0.0f, GWorld.Instance.GetWorld().GetStates(), beliefStates.GetStates(), null);
-
-        //pass the first node through to start branching out the graph of plans from
-        bool success = BuildGraph(start, leaves, usableActions, goal);
-
-        //if a plan wasn't found
-        if (!success) {
-
+        if (cheapestGoal == null)
+        {
             Debug.Log("NO PLAN");
             return null;
         }
 
-        //of all the plans found, find the one that's cheapest to execute
-        //and use that
-        Node cheapest = null;
-        foreach (Node leaf in leaves) {
-
-            if (cheapest == null) {
-
-                cheapest = leaf;
-            } else if (leaf.cost < cheapest.cost) {
-
-                cheapest = leaf;
-            }
-        }
-        List<GAction> result = new List<GAction>();
-        Node n = cheapest;
-
-        while (n != null) {
-
-            if (n.action != null) {
-
+        List<GAction> result = new();
+        for (Node n = cheapestGoal; n != null; n = n.parent)
+            if (n.action != null)
                 result.Insert(0, n.action);
-            }
 
-            n = n.parent;
-        }
-
-        //make a queue out of the actions represented by the nodes in the plan
-        //for the agent to work its way through
-        Queue<GAction> queue = new Queue<GAction>();
-
-        foreach (GAction a in result) {
-
+        Queue<GAction> queue = new();
+        foreach (var a in result)
+        {
             queue.Enqueue(a);
-        }
-
-        Debug.Log("The Plan is: ");
-        foreach (GAction a in queue) {
-
-            Debug.Log("Q: " + a.actionName);
         }
 
         return queue;
     }
 
-    private bool BuildGraph(Node parent, List<Node> leaves, List<GAction> usableActions, Dictionary<string, int> goal) {
 
-        bool foundPath = false;
+    private string HashState(Dictionary<WorldStateDefinition, int> state)
+    {
+        var sorted = new SortedDictionary<string, int>();
+        foreach (var kv in state)
+            sorted[kv.Key.key] = kv.Value;
 
-        //with all the useable actions
-        foreach (GAction action in usableActions) {
-
-            //check their preconditions
-            if (action.IsAhievableGiven(parent.state)) {
-
-                //get the state of the world if the parent node were to be executed
-                Dictionary<string, int> currentState = new Dictionary<string, int>(parent.state);
-
-                //add the effects of this node to the nodes states to reflect what
-                //the world would look like if this node's action were executed
-                foreach (KeyValuePair<string, int> eff in action.effects) {
-                    if (!currentState.ContainsKey(eff.Key)) {
-                        currentState.Add(eff.Key, eff.Value);
-                    }
-                    else
-                    {
-                        currentState[eff.Key] += eff.Value;
-                    }
-                }
-
-                //create the next node in the branch and set this current node as the parent
-                Node node = new Node(parent, parent.cost + action.cost, currentState, action);
-
-                //if the current state of the world after doing this node's action is the goal
-                //this plan will achieve that goal and will become the agent's plan
-                if (GoalAchieved(goal, currentState)) {
-
-                    leaves.Add(node);
-                    foundPath = true;
-                } else {
-                    //if no goal has been found branch out to add other actions to the plan
-                    List<GAction> subset = ActionSubset(usableActions, action);
-                    bool found = BuildGraph(node, leaves, subset, goal);
-
-                    if (found) {
-
-                        foundPath = true;
-                    }
-                }
-            }
-        }
-        return foundPath;
+        return string.Join("|", System.Linq.Enumerable.Select(sorted, kv => $"{kv.Key}:{kv.Value}"));
     }
 
-    //remove and action from a list of actions
-    private List<GAction> ActionSubset(List<GAction> actions, GAction removeMe) {
-
-        List<GAction> subset = new List<GAction>();
-
-        foreach (GAction a in actions) {
-
-            if (!a.Equals(removeMe)) {
-
-                subset.Add(a);
-            }
-        }
-        return subset;
-    }
-
-    //check goals against state of the world to determine if the goal has been achieved.
-    private bool GoalAchieved(Dictionary<string, int> goal, Dictionary<string, int> state) {
-
-        foreach (KeyValuePair<string, int> g in goal) {
-            if (state.ContainsKey(g.Key)) {
-                if(g.Value <= 0 || g.Value > state[g.Key]) return false;
-            }
-            else
+    private bool GoalAchieved(Dictionary<WorldStateDefinition, int> goal, Dictionary<WorldStateDefinition, int> state)
+    {
+        foreach (var g in goal)
+        {
+            if (!state.TryGetValue(g.Key, out int stateValue))
             {
                 if (g.Value > 0) return false;
+                continue;
             }
+
+            if (g.Value > 0 && stateValue < g.Value) return false;
         }
         return true;
     }
