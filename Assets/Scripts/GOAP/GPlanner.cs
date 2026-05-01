@@ -128,7 +128,7 @@ public class GPlanner
         Node startNode = new Node(null, 0f, GWorld.Instance.GetWorld().GetStates(), beliefStates.GetStates(), null);
 
         MinHeap<Node> openSet  = new();
-        HashSet<string> visited = new();
+        Dictionary<string,float> visited = new();
 
         openSet.Push(startNode);
         Node cheapestGoal = null;
@@ -142,9 +142,9 @@ public class GPlanner
                 break;
 
             string stateHash = HashState(current.state);
-            if (visited.Contains(stateHash))
+            if (visited.ContainsKey(stateHash) && visited[stateHash]<= current.cost)
                 continue;
-            visited.Add(stateHash);
+            visited[stateHash] = current.cost;
 
             foreach (GAction action in actions)
             {
