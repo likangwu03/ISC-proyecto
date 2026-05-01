@@ -29,6 +29,8 @@ public abstract class GAction : MonoBehaviour
     // Si la acción está ejecutando actualmente
     public bool running = false;
 
+    public int repeat = 0;
+
     // Constructor
     public GAction()
     {

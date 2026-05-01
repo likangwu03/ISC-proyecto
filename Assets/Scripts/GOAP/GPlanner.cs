@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Node : IComparable<Node> { 
@@ -7,12 +9,27 @@ public class Node : IComparable<Node> {
     public float cost;
     public Dictionary<WorldStateDefinition, int> state;
     public GAction action;
+    public Dictionary<Type, int> actionCounts;
+
 
     public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, GAction action) {
         this.parent = parent;
         this.cost = cost;
         this.state = new Dictionary<WorldStateDefinition, int>(allStates);
         this.action = action;
+
+
+        this.actionCounts = parent != null ? new Dictionary<Type, int>(parent.actionCounts) : new Dictionary<Type, int>();
+
+        if (action != null)
+        {
+            Type actionType = action.GetType();
+
+            if (!this.actionCounts.ContainsKey(actionType))
+                this.actionCounts[actionType] = 0;
+
+            this.actionCounts[actionType]++;
+        }
     }
 
     public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, Dictionary<WorldStateDefinition, int> beliefStates, GAction action) {
@@ -20,16 +37,36 @@ public class Node : IComparable<Node> {
         this.parent = parent;
         this.cost = cost;
         this.state = new Dictionary<WorldStateDefinition, int>(allStates);
-
-        foreach (KeyValuePair<WorldStateDefinition, int> b in beliefStates) {
-
-            if (!this.state.ContainsKey(b.Key)) {
-
-                this.state.Add(b.Key, b.Value);
-            }
+        foreach (var (key, value) in beliefStates)
+        {
+            this.state.Add(key, value);
         }
+
         this.action = action;
+
+
+        this.actionCounts = parent != null ? new Dictionary<Type, int>(parent.actionCounts) : new Dictionary<Type, int>();
+
+        if (action != null)
+        {
+            Type actionType = action.GetType();
+
+            if (!this.actionCounts.ContainsKey(actionType))
+                this.actionCounts[actionType] = 0;
+
+            this.actionCounts[actionType]++;
+        }
     }
+
+    public bool CanUseAction(GAction actionToCheck)
+    {
+        Type actionType = actionToCheck.GetType();
+
+        int usedCount = actionCounts.GetValueOrDefault(actionType, 0);
+
+        return usedCount <= actionToCheck.repeat;
+    }
+
     public int CompareTo(Node other) => cost.CompareTo(other.cost);
 
 }
@@ -112,6 +149,7 @@ public class GPlanner
             foreach (GAction action in actions)
             {
                 if (!action.IsAhievableGiven(current.state)) continue;
+                if (!current.CanUseAction(action)) continue;
 
                 var nextState = new Dictionary<WorldStateDefinition, int>(current.state);
                 foreach (var eff in action.effects)
@@ -161,10 +199,14 @@ public class GPlanner
     private string HashState(Dictionary<WorldStateDefinition, int> state)
     {
         var sorted = new SortedDictionary<string, int>();
-        foreach (var kv in state)
-            sorted[kv.Key.key] = kv.Value;
 
-        return string.Join("|", System.Linq.Enumerable.Select(sorted, kv => $"{kv.Key}:{kv.Value}"));
+        foreach (var kv in state)
+        {
+            if (kv.Value >= 0)
+                sorted[kv.Key.key] = kv.Value;
+        }
+
+        return string.Join("|", sorted.Select(kv => $"{kv.Key}:{kv.Value}"));
     }
 
     private bool GoalAchieved(Dictionary<WorldStateDefinition, int> goal, Dictionary<WorldStateDefinition, int> state)

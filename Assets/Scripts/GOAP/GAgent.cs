@@ -41,7 +41,6 @@ public class GAgent : MonoBehaviour
 
     private SubGoal currentGoal;
 
-    private bool invoked = false;
     private bool needsReplan = false;
 
 
@@ -59,7 +58,6 @@ public class GAgent : MonoBehaviour
     {
         currentAction.running = false;
         currentAction.PostPerform();
-        invoked = false;
     }
 
     void HandleCurrentAction()
