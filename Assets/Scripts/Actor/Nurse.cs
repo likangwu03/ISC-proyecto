@@ -8,10 +8,10 @@ public class Nurse : GAgent
     private WorldStateDefinition triage;
 
 
-    new void Start()
+    public override void Start()
     {
         base.Start();
-        SubGoal s1 = new SubGoal(triage, 1, -1);
+        SubGoal s1 = new(triage, 1, -1);
         goals.Add(s1, 1);
 
     }

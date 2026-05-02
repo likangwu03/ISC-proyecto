@@ -8,7 +8,8 @@ public class Triage : GAction
     [SerializeField]
     private WorldStateDefinition receiveTriage;
 
-    public float triageDuration = 10.0f;
+    [SerializeField] 
+    private float triageDuration = 10.0f;
 
     private GameObject patient;
 
@@ -54,7 +55,7 @@ public class Triage : GAction
     {
         patient.GetComponent<GAgent>().beliefs.SetState(receiveTriage, 1);
         Patient p = patient.GetComponent<Patient>();
-        p.triageLevel = GetWeightedRandomLevel();
+        p.SetTriageLevel(GetWeightedRandomLevel());
         GameManager.Instance.AddToTriageQueue(p);
         return true;
     }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System;
 
+
+
 public class PriorityActor : IComparable<PriorityActor>
 {
     private static int nextId = 0;
@@ -12,7 +14,7 @@ public class PriorityActor : IComparable<PriorityActor>
     public PriorityActor(Patient actor)
     {
         Actor = actor;
-        Level = actor.triageLevel;
+        Level = actor.GetTriageLevel();
         Id = nextId++;
     }
 
@@ -27,51 +29,52 @@ public class PriorityActor : IComparable<PriorityActor>
     }
 }
 
+[Serializable]
+public class HospitalInfo
+{
+    public string doctor = "";
+    public string administration = "";
+    public string nurse = "";
+    public float doctorStart = -1;
+    public float doctorEnd = -1;
+
+    public float administrationStart = -1;
+    public float administrationEnd = -1;
+
+    public float nurseStart = -1;
+    public float nurseEnd = -1;
+}
+
 
 public class Patient : GAgent
 {
     [SerializeField]
     private WorldStateDefinition isHome;
-    //[SerializeField]
-    //private WorldStateDefinition isWaiting;
-    //[SerializeField]
-    //private WorldStateDefinition isTreated;
-    //[SerializeField]
-    //private WorldStateDefinition hasRegistered;
 
-    public string agentName;
-    public int triageLevel;
+    private readonly string agentName;
+    private int triageLevel;
 
-    new void Start()
+    private HospitalInfo hospitalInfo;
+
+    public override void Start()
     {
         GameManager.Instance.patientList.Add(this);
-      // Call the base start
         base.Start();
- /*         // Set up the subgoal "isWaiting"
-        SubGoal s1 = new SubGoal(isWaiting, 1, 1);
-        // Add it to the goals
-        goals.Add(s1, 1);
+        SubGoal s = new(isHome, 1, 0);
+        goals.Add(s, 4);
 
-        // Set up the subgoal "isTreated"
-        SubGoal s2 = new SubGoal(isTreated, 1, 0);
-        // Add it to the goals
-        goals.Add(s2, 5);
-
-
-        // Set up the subgoal "hasRegistered"
-        SubGoal s4 = new SubGoal(hasRegistered, 1, 0);
-        // Add it to the goals
-        goals.Add(s4, 2);*/
-
-        // Set up the subgoal "isHome"
-        SubGoal s3 = new SubGoal(isHome, 1, 0);
-        // Add it to the goals
-        goals.Add(s3, 4);
         
     }
 
     private void OnDestroy()
     {
         GameManager.Instance.patientList.Remove(this);
+    }
+
+    public string GetAgentName() { return agentName; }
+    public int GetTriageLevel() {  return triageLevel; }
+    public void SetTriageLevel(int level)
+    {
+        triageLevel = level;
     }
 }

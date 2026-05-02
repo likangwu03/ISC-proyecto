@@ -41,15 +41,12 @@ public class GAgent : MonoBehaviour
 
     private SubGoal currentGoal;
 
-    private bool needsReplan = false;
-
-
     public void Awake()
     {
         planner = new GPlanner();
     }
 
-    public void Start()
+    public virtual void Start()
     {
         actions.AddRange(GetComponents<GAction>());
     }

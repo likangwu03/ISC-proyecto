@@ -13,8 +13,8 @@ public class Register : GAction
 
     [SerializeField]
     private WorldStateDefinition internalRoomPatients;
-
-    public float registrationDuration = 3.0f;
+    [SerializeField]
+    private float registrationDuration = 3.0f;
 
     private GameObject pacient;
 

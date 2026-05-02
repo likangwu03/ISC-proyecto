@@ -9,10 +9,10 @@ public class AdmissionsAgent : GAgent
     private WorldStateDefinition patientRegistration;
 
 
-    new void Start()
+    public override void Start()
     {
         base.Start();
-        SubGoal s1 = new SubGoal(patientRegistration, 1, -1);
+        SubGoal s1 = new(patientRegistration, 1, -1);
         goals.Add(s1, 1);
 
     }

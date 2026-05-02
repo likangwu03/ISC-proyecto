@@ -9,8 +9,8 @@ public class TreatPatient : GAction
     private WorldStateDefinition isTreated;
     [SerializeField]
     private WorldStateDefinition internalRoomPatients;
-
-    public float TreatDuration = 10.0f;
+    [SerializeField]
+    private float TreatDuration = 10.0f;
 
     private GameObject patient;
 
