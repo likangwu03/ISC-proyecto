@@ -54,47 +54,42 @@ public class GAgent : MonoBehaviour
         actions.AddRange(GetComponents<GAction>());
     }
 
-    public void CompleteAction()
-    {
-        currentAction.running = false;
-        currentAction.PostPerform();
-    }
-
-    void HandleCurrentAction()
-    {
-        if (currentAction == null || !currentAction.running)
-            return;
-
-        if (!currentAction.IsDone())
-            return;
-
-        CompleteAction();
-    }
-
-
     void LateUpdate()
     {
         HandleCurrentAction();
 
-        if (currentAction == null)
+        if (currentAction == null) {
             Replan();
+            ExecuteNextAction();
+        }
 
-        if (currentAction != null && currentAction.running)
-            return;
-
-        if (actionQueue == null || actionQueue.Count == 0)
+        if (actionQueue != null && actionQueue.Count == 0)
         {
             FinishGoal();
             return;
         }
 
-        ExecuteNextAction();
+        
     }
+
+    void HandleCurrentAction()
+    {
+        if (currentAction == null)
+            return;
+
+        if (!currentAction.IsDone())
+            return;
+
+        if (!currentAction.PostPerform())
+            actionQueue = null;
+
+        currentAction = null;
+    }
+
 
 
     void Replan()
     {
-        needsReplan = false;
         actionQueue = null;
         currentGoal = null;
 
@@ -111,32 +106,32 @@ public class GAgent : MonoBehaviour
             currentGoal = sg.Key;
             break;
         }
+
     }
 
     void FinishGoal()
     {
-        actionQueue = null;
+        Queue<GAction> plan = planner.Plan(actions, currentGoal.sGoals, beliefs);
+        if (plan == null || plan.Count() > 0) return;
 
         if (currentGoal.repeat == -1)
             return;
-
         currentGoal.repeat--;
-
         if (currentGoal.repeat < 0)
             goals.Remove(currentGoal);
     }
 
     void ExecuteNextAction()
     {
+        if (actionQueue == null || actionQueue.Count() == 0) return;
         currentAction = actionQueue.Dequeue();
 
         if (!currentAction.PrePerform())
         {
+            currentAction = null;
             actionQueue = null;
             return;
         }
-
-        currentAction.running = true;
         currentAction.Perform();
     }
 

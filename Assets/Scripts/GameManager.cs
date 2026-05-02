@@ -6,21 +6,22 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [SerializeField]
+    public DynamicQueueLayout queue;
+
     public Queue<GameObject> patients = new Queue<GameObject>();
 
     public Queue<GameObject> doctors = new Queue<GameObject>();
 
     public Queue<GameObject> waitingSpots = new Queue<GameObject>();
 
-    public Queue<GameObject> registers = new Queue<GameObject>();
+    public int max_internal_room_patients = 5;
+
 
     [SerializeField]
     private WorldStateDefinition WaitingSpot;
     [SerializeField]
     private WorldStateDefinition Doctor;
-    [SerializeField]
-    private WorldStateDefinition Register;
-
 
 
     void Awake()
@@ -60,15 +61,6 @@ public class GameManager : MonoBehaviour
             GWorld.Instance.GetWorld().ModifyState(Doctor, ListDoctors.Length);
         }
 
-        GameObject[] ListRegisters = GameObject.FindGameObjectsWithTag("Register");
-        foreach (GameObject c in ListRegisters)
-        {
-            registers.Enqueue(c);
-        }
-        if (ListRegisters.Length > 0)
-        {
-            GWorld.Instance.GetWorld().ModifyState(Register, ListRegisters.Length);
-        }
 
     }
 
@@ -111,17 +103,7 @@ public class GameManager : MonoBehaviour
         return waitingSpots.Dequeue();
     }
 
-
-    public void AddRegister(GameObject d)
-    {
-        registers.Enqueue(d);
-    }
-
-    public GameObject GetRegister()
-    {
-        if (registers.Count == 0) return null;
-        return registers.Dequeue();
-    }
+    public DynamicQueueLayout getQueue() { return queue; }
 
     public void Update()
     {

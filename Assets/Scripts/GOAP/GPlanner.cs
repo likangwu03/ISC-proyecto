@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Node : IComparable<Node> { 
@@ -124,8 +125,14 @@ public class GPlanner
 {
     public Queue<GAction> Plan(List<GAction> actions, Dictionary<WorldStateDefinition, int> goal, WorldStates beliefStates)
     {
+        Queue<GAction> queue = new();
 
         Node startNode = new Node(null, 0f, GWorld.Instance.GetWorld().GetStates(), beliefStates.GetStates(), null);
+
+        if(GoalAchieved(goal, startNode.state))
+        {
+            return queue;
+        }
 
         MinHeap<Node> openSet  = new();
         Dictionary<string,float> visited = new();
@@ -186,12 +193,10 @@ public class GPlanner
             if (n.action != null)
                 result.Insert(0, n.action);
 
-        Queue<GAction> queue = new();
         foreach (var a in result)
         {
             queue.Enqueue(a);
         }
-
         return queue;
     }
 
@@ -209,7 +214,7 @@ public class GPlanner
         return string.Join("|", sorted.Select(kv => $"{kv.Key}:{kv.Value}"));
     }
 
-    private bool GoalAchieved(Dictionary<WorldStateDefinition, int> goal, Dictionary<WorldStateDefinition, int> state)
+    public bool GoalAchieved(Dictionary<WorldStateDefinition, int> goal, Dictionary<WorldStateDefinition, int> state)
     {
         foreach (var g in goal)
         {

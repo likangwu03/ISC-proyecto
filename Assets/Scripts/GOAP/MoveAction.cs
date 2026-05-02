@@ -48,13 +48,10 @@ public class MoveAction : GAction
         return true;
     }
 
-    public override bool PostPerform()
-    {
-        return true;
-    }
-
     public override void Perform()
     {
         MoveToTarget();
     }
+
+
 }

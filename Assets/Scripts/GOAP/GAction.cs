@@ -8,8 +8,7 @@ public abstract class GAction : MonoBehaviour
     public string actionName = "Action";
     // Coste de la acción
     public float cost = 1.0f;
-    // Duración que debe tomar la acción
-    public float duration = 0.0f;
+
     // Array de estados del mundo como precondiciones
     [SerializeField]
     protected WorldState[] preConditions;
@@ -26,8 +25,7 @@ public abstract class GAction : MonoBehaviour
     public GInventory inventory;
     // Estado del agente
     public WorldStates beliefs;
-    // Si la acción está ejecutando actualmente
-    public bool running = false;
+
 
     public int repeat = 0;
 
