@@ -8,7 +8,6 @@ TagManager:
   - Doctor
   - Register
   - Home
-  - agent
   layers:
   - Default
   - TransparentFX

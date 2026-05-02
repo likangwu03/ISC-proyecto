@@ -10,9 +10,13 @@ public class Patient : GAgent
     private WorldStateDefinition isHome;
     [SerializeField]
     private WorldStateDefinition hasRegistered;
+
+    public string agentName;
+    public int triageLevel;
+
     new void Start()
     {
-
+        GameManager.Instance.patientList.Add(this);
         // Call the base start
         base.Start();
         // Set up the subgoal "isWaiting"
@@ -34,6 +38,12 @@ public class Patient : GAgent
         SubGoal s4 = new SubGoal(hasRegistered, 1, 0);
         // Add it to the goals
         goals.Add(s4, 2);
+
+        
     }
 
+    private void OnDestroy()
+    {
+        GameManager.Instance.patientList.Remove(this);
+    }
 }

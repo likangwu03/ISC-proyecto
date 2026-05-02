@@ -55,6 +55,7 @@ public class Register : GAction
     {
         pacient.GetComponent<GAgent>().beliefs.SetState(isRegistered, 1);
         GWorld.Instance.GetWorld().ModifyState(internal_room_patients, 1);
+        GameManager.Instance.AddPatient(pacient);
         return true;
     }
 

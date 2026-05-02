@@ -11,18 +11,18 @@ public class GameManager : MonoBehaviour
 
     public Queue<GameObject> patients = new Queue<GameObject>();
 
-    public Queue<GameObject> doctors = new Queue<GameObject>();
+    public Queue<GameObject> _patients = new Queue<GameObject>();
 
     public Queue<GameObject> waitingSpots = new Queue<GameObject>();
 
     public int max_internal_room_patients = 5;
 
+    public List<Patient> patientList;
 
     [SerializeField]
     private WorldStateDefinition WaitingSpot;
     [SerializeField]
     private WorldStateDefinition Doctor;
-
 
     void Awake()
     {
@@ -50,18 +50,6 @@ public class GameManager : MonoBehaviour
         {
             GWorld.Instance.GetWorld().ModifyState(WaitingSpot, ListWaitingAreas.Length);
         }
-
-        GameObject[] ListDoctors = GameObject.FindGameObjectsWithTag("Doctor");
-        foreach (GameObject c in ListDoctors)
-        {
-            doctors.Enqueue(c);
-        }
-        if (ListDoctors.Length > 0)
-        {
-            GWorld.Instance.GetWorld().ModifyState(Doctor, ListDoctors.Length);
-        }
-
-
     }
 
     public void RestartGame()
@@ -79,18 +67,6 @@ public class GameManager : MonoBehaviour
         if (patients.Count == 0) return null;
         return patients.Dequeue();
     }
-
-    public void AddDoctor(GameObject d)
-    {
-        doctors.Enqueue(d);
-    }
-
-    public GameObject GetDoctor()
-    {
-        if (doctors.Count == 0) return null;
-        return doctors.Dequeue();
-    }
-
 
     public void AddWaitingSpot(GameObject d)
     {
