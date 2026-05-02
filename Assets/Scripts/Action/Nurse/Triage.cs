@@ -37,6 +37,10 @@ public class Triage : GAction
         patient.GetComponent<ReceiveTriage>().target = pos;
         patient.GetComponent<ReceiveTriage>().Perform();
 
+        Patient p = patient.GetComponent<Patient>();
+        p.HospitalInfo.nurse = gameObject.GetComponent<Nurse>().GetAgentName();
+        p.HospitalInfo.nurseStart = Time.time;
+
         return true;
     }
 
@@ -56,6 +60,8 @@ public class Triage : GAction
         patient.GetComponent<GAgent>().beliefs.SetState(receiveTriage, 1);
         Patient p = patient.GetComponent<Patient>();
         p.SetTriageLevel(GetWeightedRandomLevel());
+        p.HospitalInfo.triageLevel = p.GetTriageLevel();
+        p.HospitalInfo.nurseEnd = Time.time;
         GameManager.Instance.AddToTriageQueue(p);
         return true;
     }

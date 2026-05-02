@@ -16,7 +16,7 @@ public class Register : GAction
     [SerializeField]
     private float registrationDuration = 3.0f;
 
-    private GameObject pacient;
+    private GameObject patient;
 
     [SerializeField]
     private GameObject pos;
@@ -25,7 +25,7 @@ public class Register : GAction
 
     public override void Perform()
     {
-        pacient.GetComponent<GAgent>().beliefs.SetState(canRegistered, 1);
+        patient.GetComponent<GAgent>().beliefs.SetState(canRegistered, 1);
         endTime = Time.time + registrationDuration;
     }
 
@@ -40,12 +40,16 @@ public class Register : GAction
 
         if(state.HasState(internalRoomPatients) && state.GetStates()[internalRoomPatients] >= GameManager.Instance.maxInternalRoomPatients) return false;
 
-        pacient = GameManager.Instance.getQueue().Leave(0);
+        patient = GameManager.Instance.GetQueue().Leave(0);
 
-        if(pacient == null) return false;
+        if(patient == null) return false;
 
-        pacient.GetComponent<MoveToRegister>().target = pos;
-        pacient.GetComponent<GAgent>().beliefs.SetState(canRegistered, 1);
+        Patient p = patient.GetComponent<Patient>();
+        p.HospitalInfo.receptionist = gameObject.GetComponent<AdmissionsAgent>().GetAgentName();
+        p.HospitalInfo.receptionistStart = Time.time;
+
+        patient.GetComponent<MoveToRegister>().target = pos;
+        patient.GetComponent<GAgent>().beliefs.SetState(canRegistered, 1);
 
 
         return true;
@@ -53,9 +57,11 @@ public class Register : GAction
 
     public override bool PostPerform()
     {
-        pacient.GetComponent<GAgent>().beliefs.SetState(isRegistered, 1);
+        patient.GetComponent<GAgent>().beliefs.SetState(isRegistered, 1);
         GWorld.Instance.GetWorld().ModifyState(internalRoomPatients, 1);
-        GameManager.Instance.AddPatient(pacient);
+        GameManager.Instance.AddPatient(patient);
+        Patient p = patient.GetComponent<Patient>();
+        p.HospitalInfo.receptionistEnd = Time.time;
         return true;
     }
 

@@ -11,7 +11,7 @@ public class WaitToRegister : MoveAction
 
     public override bool PrePerform()
     {
-        queue = GameManager.Instance.getQueue();
+        queue = GameManager.Instance.GetQueue();
         pos = queue.Enqueue(gameObject);
         return true;
     }

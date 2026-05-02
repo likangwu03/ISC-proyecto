@@ -40,6 +40,7 @@ public class GAgent : MonoBehaviour
     public GAction currentAction;
 
     private SubGoal currentGoal;
+    protected string agentName = "agent";
 
     public void Awake()
     {
@@ -130,6 +131,11 @@ public class GAgent : MonoBehaviour
             return;
         }
         currentAction.Perform();
+    }
+
+    public string GetAgentName()
+    {
+        return agentName;
     }
 
 }

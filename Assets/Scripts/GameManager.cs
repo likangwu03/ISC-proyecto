@@ -7,13 +7,13 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     [SerializeField]
-    public DynamicQueueLayout queue;
+    private DynamicQueueLayout queue;
 
-    private Queue<GameObject> patients = new Queue<GameObject>();
+    private Queue<GameObject> patients = new();
 
     private MinHeap<PriorityActor> triagedPatientsQueue = new();
 
-    private Queue<GameObject> waitingSpots = new Queue<GameObject>();
+    private Queue<GameObject> waitingSpots = new();
 
     public int maxInternalRoomPatients = 5;
 
@@ -24,12 +24,20 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private WorldStateDefinition Doctor;
 
+    private Dictionary<string,HospitalInfo> hospitalInfoDic =new();
+
+    public Dictionary<string, HospitalInfo> HospitalInfoDic
+    {
+        get => hospitalInfoDic;
+        set => hospitalInfoDic = value;
+    }
+
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            init();
+            Init();
             //DontDestroyOnLoad(gameObject);
         }
         else
@@ -38,7 +46,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void init()
+    private void Init()
     {
         Cursor.visible = false;
         GameObject[] ListWaitingAreas = GameObject.FindGameObjectsWithTag("WaitingSpot");
@@ -79,7 +87,7 @@ public class GameManager : MonoBehaviour
         return waitingSpots.Dequeue();
     }
 
-    public DynamicQueueLayout getQueue() { return queue; }
+    public DynamicQueueLayout GetQueue() { return queue; }
 
 
     public void AddToTriageQueue(Patient p)

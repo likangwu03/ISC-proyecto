@@ -33,37 +33,47 @@ public class PriorityActor : IComparable<PriorityActor>
 public class HospitalInfo
 {
     public string doctor = "";
-    public string administration = "";
+    public string receptionist = "";
     public string nurse = "";
     public float doctorStart = -1;
     public float doctorEnd = -1;
 
-    public float administrationStart = -1;
-    public float administrationEnd = -1;
+    public float receptionistStart = -1;
+    public float receptionistEnd = -1;
 
     public float nurseStart = -1;
     public float nurseEnd = -1;
+
+    public int triageLevel = -1;
 }
 
 
 public class Patient : GAgent
 {
+    private static int nextId = 0;
     [SerializeField]
     private WorldStateDefinition isHome;
 
-    private readonly string agentName;
     private int triageLevel;
 
     private HospitalInfo hospitalInfo;
 
+    public HospitalInfo HospitalInfo
+    {
+        get => hospitalInfo;
+        set => hospitalInfo = value;
+    }
+
     public override void Start()
     {
-        GameManager.Instance.patientList.Add(this);
         base.Start();
+
+        agentName = "Patient" + nextId++;
+        GameManager.Instance.patientList.Add(this);
+        hospitalInfo = new HospitalInfo();
+        GameManager.Instance.HospitalInfoDic.Add(agentName, hospitalInfo);
         SubGoal s = new(isHome, 1, 0);
         goals.Add(s, 4);
-
-        
     }
 
     private void OnDestroy()
@@ -71,7 +81,6 @@ public class Patient : GAgent
         GameManager.Instance.patientList.Remove(this);
     }
 
-    public string GetAgentName() { return agentName; }
     public int GetTriageLevel() {  return triageLevel; }
     public void SetTriageLevel(int level)
     {
