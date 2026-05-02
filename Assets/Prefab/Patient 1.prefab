@@ -2825,6 +2825,7 @@ GameObject:
   - component: {fileID: 1912859631187521346}
   - component: {fileID: 3593562796362954074}
   - component: {fileID: 8515944962383710736}
+  - component: {fileID: 6206552696320436402}
   m_Layer: 0
   m_Name: Patient 1
   m_TagString: Untagged
@@ -2943,7 +2944,7 @@ MonoBehaviour:
   cost: 1
   preConditions:
   - value: 1
-    def: {fileID: 11400000, guid: bcdbc97165308064b81abad756c25b4a, type: 2}
+    def: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
   afterEffects:
   - value: 1
     def: {fileID: 11400000, guid: 2300404ba6e58b9458f56ed2795a2d08, type: 2}
@@ -2998,6 +2999,30 @@ MonoBehaviour:
   target: {fileID: 0}
   targetTag: 
   receiveTriage: {fileID: 11400000, guid: bcdbc97165308064b81abad756c25b4a, type: 2}
+--- !u!114 &6206552696320436402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881807149238628900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f489644b7327e7f4cbaac1c530be4ee5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Action
+  cost: 1
+  preConditions:
+  - value: 1
+    def: {fileID: 11400000, guid: bcdbc97165308064b81abad756c25b4a, type: 2}
+  afterEffects:
+  - value: 1
+    def: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
+  repeat: 0
+  target: {fileID: 0}
+  targetTag: 
+  isTreated: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
 --- !u!1 &7927236269272520591
 GameObject:
   m_ObjectHideFlags: 0

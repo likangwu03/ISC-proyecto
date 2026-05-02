@@ -9,13 +9,13 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public DynamicQueueLayout queue;
 
-    public Queue<GameObject> patients = new Queue<GameObject>();
+    private Queue<GameObject> patients = new Queue<GameObject>();
 
-    public Queue<GameObject> _patients = new Queue<GameObject>();
+    private MinHeap<PriorityActor> triagedPatientsQueue = new();
 
-    public Queue<GameObject> waitingSpots = new Queue<GameObject>();
+    private Queue<GameObject> waitingSpots = new Queue<GameObject>();
 
-    public int max_internal_room_patients = 5;
+    public int maxInternalRoomPatients = 5;
 
     public List<Patient> patientList;
 
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         patients.Enqueue(p);
     }
 
-    public GameObject RemovePatient()
+    public GameObject GetNextPatient()
     {
         if (patients.Count == 0) return null;
         return patients.Dequeue();
@@ -80,6 +80,19 @@ public class GameManager : MonoBehaviour
     }
 
     public DynamicQueueLayout getQueue() { return queue; }
+
+
+    public void AddToTriageQueue(Patient p)
+    {
+        triagedPatientsQueue.Push(new PriorityActor(p));
+    }
+    public Patient GetNextTriagedPatient()
+    {
+        if (triagedPatientsQueue.Count == 0) return null;
+
+        PriorityActor p = triagedPatientsQueue.Pop();
+        return p.Actor;
+    }
 
     public void Update()
     {

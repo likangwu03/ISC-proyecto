@@ -10,7 +10,7 @@ public class Triage : GAction
 
     public float triageDuration = 10.0f;
 
-    private GameObject pacient;
+    private GameObject patient;
 
     [SerializeField]
     private GameObject pos;
@@ -29,20 +29,33 @@ public class Triage : GAction
 
     public override bool PrePerform()
     {
-        pacient = GameManager.Instance.RemovePatient();
+        patient = GameManager.Instance.GetNextPatient();
 
-        if (pacient == null) return false;
+        if (patient == null) return false;
 
-        pacient.GetComponent<ReceiveTriage>().target = pos;
-        pacient.GetComponent<ReceiveTriage>().Perform();
+        patient.GetComponent<ReceiveTriage>().target = pos;
+        patient.GetComponent<ReceiveTriage>().Perform();
 
         return true;
     }
 
+    public int GetWeightedRandomLevel()
+    {
+        int roll = Random.Range(0, 15);
+
+        if (roll == 0) return 1;        // ~6.7%
+        if (roll <= 2) return 2;        // ~13.3%
+        if (roll <= 5) return 3;        // ~20%
+        if (roll <= 9) return 4;        // ~26.7%
+        return 5;                       // ~33.3%
+    }
+
     public override bool PostPerform()
     {
-        pacient.GetComponent<GAgent>().beliefs.SetState(receiveTriage, 1);
-        GameManager.Instance._patients.Enqueue(pacient);
+        patient.GetComponent<GAgent>().beliefs.SetState(receiveTriage, 1);
+        Patient p = patient.GetComponent<Patient>();
+        p.triageLevel = GetWeightedRandomLevel();
+        GameManager.Instance.AddToTriageQueue(p);
         return true;
     }
 }

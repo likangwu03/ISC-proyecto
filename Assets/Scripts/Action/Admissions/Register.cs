@@ -12,7 +12,7 @@ public class Register : GAction
     private WorldStateDefinition canRegistered;
 
     [SerializeField]
-    private WorldStateDefinition internal_room_patients;
+    private WorldStateDefinition internalRoomPatients;
 
     public float registrationDuration = 3.0f;
 
@@ -38,7 +38,7 @@ public class Register : GAction
     {
         WorldStates state = GWorld.Instance.GetWorld();
 
-        if(state.HasState(internal_room_patients) && state.GetStates()[internal_room_patients] >= GameManager.Instance.max_internal_room_patients) return false;
+        if(state.HasState(internalRoomPatients) && state.GetStates()[internalRoomPatients] >= GameManager.Instance.maxInternalRoomPatients) return false;
 
         pacient = GameManager.Instance.getQueue().Leave(0);
 
@@ -54,7 +54,7 @@ public class Register : GAction
     public override bool PostPerform()
     {
         pacient.GetComponent<GAgent>().beliefs.SetState(isRegistered, 1);
-        GWorld.Instance.GetWorld().ModifyState(internal_room_patients, 1);
+        GWorld.Instance.GetWorld().ModifyState(internalRoomPatients, 1);
         GameManager.Instance.AddPatient(pacient);
         return true;
     }
