@@ -83,10 +83,12 @@ def str_to_list(series):
         
     return new_series
 
+st.image("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2017%2F05%2F15%2F23%2F47%2Fstethoscope-icon-2316460_1280.png&f=1&nofb=1&ipt=26df797828ccbb73935c176641e7f85491ca6af74d8ab1a4bae8f5396bc49b08", "", 50)
+
 with st.container(horizontal=False, vertical_alignment="center"):
     
     st.markdown("<p style='color:#4dabf7; font-size: 30px; font-weight:bold; font-family: sans-serif; text-align: center; margin-bottom: 40px;'>DASHBOARD INTERACTIVO DE <br> LA SIMULACIÓN</p>",
-             unsafe_allow_html=True)
+                unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
@@ -167,10 +169,7 @@ with st.container(horizontal=False, vertical_alignment="center"):
                 selected_patient = st.selectbox("Selecciona un paciente",
                                             options=patients,
                                             width=200,
-                                            key="patient_selector")
-                if "selected_patient" not in st.session_state or selected_patient != st.session_state.selected_patient:
-                            st.session_state.selected_patient = selected_patient
-                            st.rerun()
+                                            key="selected_patient")
             
             st.space("medium")
             
@@ -238,10 +237,7 @@ with st.container(horizontal=False, vertical_alignment="center"):
                         selected_doctor = st.selectbox("Selecciona un doctor",
                                                     options=doctors_list,
                                                     width=200,
-                                                    key="doctor_selector")
-                        if "selected_doctor" not in st.session_state or selected_doctor != st.session_state.selected_doctor:
-                            st.session_state.selected_doctor = selected_doctor
-                            st.rerun()
+                                                    key="selected_doctor")
     
     with col2:
         
@@ -308,12 +304,7 @@ with st.container(horizontal=False, vertical_alignment="center"):
                                         label_visibility = "collapsed",
                                         horizontal=True,
                                         options=states_list,
-                                        key="state_selector")
-                
-                if "patients_sort_state" not in st.session_state or patients_sort_state != st.session_state.patients_sort_state:
-                            st.session_state.patients_sort_state = patients_sort_state
-                            st.rerun()
-            
+                                        key="patients_sort_state")
             
             # Second chart
             
@@ -324,7 +315,8 @@ with st.container(horizontal=False, vertical_alignment="center"):
                 with st.container(horizontal=False):
                     
                     doctor_ratio = "totalTime" if "doctor_ratio" not in st.session_state else st.session_state.doctor_ratio
-                    
+                    if "doctor_ratio" in st.session_state:
+                        doctor_ratio = "totalTime" if doctor_ratio == "Tiempo total" else "totalPatients"
                     plt.style.use("seaborn-v0_8")
                     fig, ax = plt.subplots(figsize=(10, 4))
                     
@@ -383,12 +375,5 @@ with st.container(horizontal=False, vertical_alignment="center"):
                                                 label_visibility = "collapsed",
                                                 horizontal=True,
                                                 options=["Tiempo total", "Número de pacientes"],
-                                                key="doctor_ratio_chooser")
-                        
-                        converted_ratio = "totalTime" if doctor_ratio == "Tiempo total" else "totalPatients"
-                        
-                        if "doctor_ratio" not in st.session_state or converted_ratio != st.session_state.doctor_ratio:
-                            
-                            st.session_state.doctor_ratio = converted_ratio
-                            st.rerun()
+                                                key="doctor_ratio")
             

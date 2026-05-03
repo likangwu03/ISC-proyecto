@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 
     public int maxInternalRoomPatients = 5;
 
-    public List<Patient> patientList;
+    private List<Patient> patientList;
 
     [SerializeField]
     private WorldStateDefinition WaitingSpot;
@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             Init();
+            patientList = new List<Patient>();
             //DontDestroyOnLoad(gameObject);
         }
         else
@@ -109,6 +110,13 @@ public class GameManager : MonoBehaviour
             GWorld.Instance.GetWorld().Clear();
             SceneManager.LoadScene("Menu");
         }
+    }
+
+
+
+    public List<Patient> getPatientsList()
+    {
+        return patientList;
     }
 
 }

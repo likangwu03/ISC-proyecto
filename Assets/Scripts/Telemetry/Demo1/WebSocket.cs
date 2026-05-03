@@ -17,10 +17,7 @@ public class WebSocketClient : MonoBehaviour
         else if (sharedInstance != this)
         {
             Debug.LogWarning("Duplicate WebSocketClient instance found on " + gameObject.name + ", but not destroying it to avoid breaking logic.");
-            // Optionally disable this duplicate without destroying it:
             this.enabled = false;
-            // Or move it far away or hide it:
-            // gameObject.SetActive(false);
         }
     }
 
@@ -38,7 +35,6 @@ public class WebSocketClient : MonoBehaviour
         };
         ws.OnMessage += (sender, e) => {
             Debug.Log("Received from server: " + e.Data);
-            // Handle the response from FastAPI
         }
         ;
 

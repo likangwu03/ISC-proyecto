@@ -52,6 +52,8 @@ public class Patient : GAgent
     [SerializeField]
     private WorldStateDefinition isHome;
 
+    private string patientName;
+
     private int triageLevel;
 
     private HospitalInfo hospitalInfo;
@@ -70,7 +72,9 @@ public class Patient : GAgent
         chatBubble.Setup("Hello!", ChatBubble.IconType.Happy);
 
         agentName = "Patient" + nextId++;
-        GameManager.Instance.patientList.Add(this);
+        SetPatientName(agentName);
+
+        GameManager.Instance.getPatientsList().Add(this);
         hospitalInfo = new HospitalInfo();
         GameManager.Instance.HospitalInfoDic.Add(agentName, hospitalInfo);
         SubGoal s = new(isHome, 1, 0);
@@ -79,7 +83,7 @@ public class Patient : GAgent
 
     private void OnDestroy()
     {
-        GameManager.Instance.patientList.Remove(this);
+        GameManager.Instance.getPatientsList().Remove(this);
     }
 
     public int GetTriageLevel() { return triageLevel; }
@@ -87,4 +91,9 @@ public class Patient : GAgent
     {
         triageLevel = level;
     }
+
+    public string GetPatientName() { return this.patientName; }
+    public void SetPatientName(string name) { patientName = name; }
+
+    public bool IsHome() { return isHome; }
 }

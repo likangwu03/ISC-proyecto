@@ -26,7 +26,7 @@ async def websocket_endpoint(websocket: WebSocket):
             parsed = json.loads(data)
 
             print(f"Received barrel data: {parsed}")
-            for barrel in parsed["barrels"]:
+            """for barrel in parsed["barrels"]:
                 name = barrel["name"]
                 generatedAt = barrel["generatedAt"]
                 destroyedAt = barrel["destroyedAt"]
@@ -35,7 +35,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 
                 print(barrel)
 
-            await websocket.send_text("Positions received")
+            await websocket.send_text("Positions received")"""
             
     except WebSocketDisconnect:
         
