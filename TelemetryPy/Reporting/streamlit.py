@@ -329,7 +329,7 @@ with st.container(horizontal=False, vertical_alignment="center"):
                     time_priority_chart_df = doctors_time_priority.sort_values(doctor_ratio, ascending=True)
                     
                     if doctor_ratio == "totalTime":
-                        total_time_df = time_priority_chart_df.iloc[:, 0]
+                        total_time_df = time_priority_chart_df["totalTime"]
                         ax.barh(total_time_df.index, total_time_df)
                         ax.set_xlabel("Tiempo total", fontsize=20, labelpad=20)
                         ax.legend(
@@ -342,7 +342,8 @@ with st.container(horizontal=False, vertical_alignment="center"):
                         )
                     
                     else:
-                        patients_per_priority_df = time_priority_chart_df.iloc[:, 1:-1]
+                        #patients_per_priority_df = time_priority_chart_df.iloc[:, 1:-1]
+                        patients_per_priority_df = time_priority_chart_df.drop(columns=["totalTime", "totalPatients"], errors='ignore')
                         left = [0] * len(patients_per_priority_df)
 
                         for col in patients_per_priority_df.columns:
