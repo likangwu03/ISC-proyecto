@@ -32,7 +32,7 @@ patients = timeline_df.index
 state_map = {
     "En la entrada": 0,
     "En la sala de espera": 1,
-    "En tratamiento": 2
+    "En la consulta": 2
 }
 
 states_number = len(list(state_map.keys()))

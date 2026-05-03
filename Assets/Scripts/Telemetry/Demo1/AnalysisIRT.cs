@@ -45,7 +45,6 @@ public class AnalysisIRT : MonoBehaviour
 
         if(timer > maxTime){
             string jsonToSend = buildPatientsData();
-            Debug.Log("Sending " + jsonToSend);
             wsc.SendData(jsonToSend);
             timer = 0;
         }
@@ -58,7 +57,6 @@ public class AnalysisIRT : MonoBehaviour
         patientsDataList.patients = new List<PatientData> ();
 
         List<Patient> patientsList = gameManager.getPatientsList();
-        Debug.Log("List " + patientsList.Count);
 
         foreach (Patient patient in patientsList)
         {
@@ -78,13 +76,14 @@ public class AnalysisIRT : MonoBehaviour
     {
         HospitalInfo patientInfo = patient.HospitalInfo;
 
-        if (patientInfo.receptionistStart == -1) return "En la entrada";
+        if (patientInfo.receptionistStart == -1 || patientInfo.receptionistEnd == -1) return "En la entrada";
         else if (patientInfo.nurseStart != -1 && patientInfo.nurseEnd == -1) return "En la sala de espera";
         else
         {
-            if (patientInfo.doctorEnd != -1) return "En la consulta";
-            else if (patient.IsHome()) return "En su casa";
-            return "En observación";
+            if (patientInfo.doctorStart != -1 && patientInfo.doctorEnd == -1) return "En la consulta";
+            return "En su casa";
+            //TODO: return "En observación";
+               
         }
     }
 }
