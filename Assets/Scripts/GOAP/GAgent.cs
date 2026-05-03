@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SubGoal{
+public class SubGoal
+{
 
     public Dictionary<WorldStateDefinition, int> sGoals;
     // -1 = infinito
     public int repeat;
 
-    public SubGoal(WorldStateDefinition s, int i,int repeat = 0) {
+    public SubGoal(WorldStateDefinition s, int i, int repeat = 0)
+    {
 
         sGoals = new Dictionary<WorldStateDefinition, int>
         {
@@ -56,7 +58,8 @@ public class GAgent : MonoBehaviour
     {
         HandleCurrentAction();
 
-        if (currentAction == null) {
+        if (currentAction == null)
+        {
             Replan();
             ExecuteNextAction();
         }
@@ -67,9 +70,8 @@ public class GAgent : MonoBehaviour
             return;
         }
 
-        
-    }
 
+    }
     void HandleCurrentAction()
     {
         if (currentAction == null)
@@ -83,8 +85,6 @@ public class GAgent : MonoBehaviour
 
         currentAction = null;
     }
-
-
 
     void Replan()
     {
@@ -137,5 +137,4 @@ public class GAgent : MonoBehaviour
     {
         return agentName;
     }
-
 }

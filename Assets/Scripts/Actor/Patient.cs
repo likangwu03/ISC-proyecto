@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System;
 
-
-
 public class PriorityActor : IComparable<PriorityActor>
 {
     private static int nextId = 0;
@@ -68,6 +66,9 @@ public class Patient : GAgent
     {
         base.Start();
 
+        ChatBubble chatBubble = GetComponentInChildren<ChatBubble>(true);
+        chatBubble.Setup("Hello!", ChatBubble.IconType.Happy);
+
         agentName = "Patient" + nextId++;
         GameManager.Instance.patientList.Add(this);
         hospitalInfo = new HospitalInfo();
@@ -81,7 +82,7 @@ public class Patient : GAgent
         GameManager.Instance.patientList.Remove(this);
     }
 
-    public int GetTriageLevel() {  return triageLevel; }
+    public int GetTriageLevel() { return triageLevel; }
     public void SetTriageLevel(int level)
     {
         triageLevel = level;

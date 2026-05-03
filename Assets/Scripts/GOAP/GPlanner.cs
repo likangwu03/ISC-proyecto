@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Node : IComparable<Node> { 
+public class Node : IComparable<Node>
+{
     public Node parent;
     public float cost;
     public Dictionary<WorldStateDefinition, int> state;
@@ -13,7 +12,8 @@ public class Node : IComparable<Node> {
     public Dictionary<Type, int> actionCounts;
 
 
-    public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, GAction action) {
+    public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, GAction action)
+    {
         this.parent = parent;
         this.cost = cost;
         this.state = new Dictionary<WorldStateDefinition, int>(allStates);
@@ -33,7 +33,8 @@ public class Node : IComparable<Node> {
         }
     }
 
-    public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, Dictionary<WorldStateDefinition, int> beliefStates, GAction action) {
+    public Node(Node parent, float cost, Dictionary<WorldStateDefinition, int> allStates, Dictionary<WorldStateDefinition, int> beliefStates, GAction action)
+    {
 
         this.parent = parent;
         this.cost = cost;
@@ -80,55 +81,50 @@ public class GPlanner
 
         Node startNode = new Node(null, 0f, GWorld.Instance.GetWorld().GetStates(), beliefStates.GetStates(), null);
 
-        if(GoalAchieved(goal, startNode.state))
+        if (GoalAchieved(goal, startNode.state))
         {
             return queue;
         }
 
-        MinHeap<Node> openSet  = new();
-        Dictionary<string,float> visited = new();
+        MinHeap<Node> openSet = new();
+        Dictionary<string, float> visited = new();
 
         openSet.Push(startNode);
         Node cheapestGoal = null;
 
+        // Djkistra
         while (openSet.Count > 0)
         {
             Node current = openSet.Pop();
 
-            // encontrrado
+            // Se ha llegado al nodo objetivo porque el coste del nuevo camino es mayor que el ya existente
             if (cheapestGoal != null && current.cost >= cheapestGoal.cost)
                 break;
 
             string stateHash = HashState(current.state);
-            if (visited.ContainsKey(stateHash) && visited[stateHash]<= current.cost)
-                continue;
-            visited[stateHash] = current.cost;
-
-            foreach (GAction action in actions)
+            if (!(visited.ContainsKey(stateHash) && visited[stateHash] <= current.cost))
             {
-                if (!action.IsAhievableGiven(current.state)) continue;
-                if (!current.CanUseAction(action)) continue;
+                visited[stateHash] = current.cost;
 
-                var nextState = new Dictionary<WorldStateDefinition, int>(current.state);
-                foreach (var eff in action.effects)
+                foreach (GAction action in actions)
                 {
-                    if (!nextState.ContainsKey(eff.Key))
-                        nextState.Add(eff.Key, eff.Value);
+                    if (!action.IsAchievableGiven(current.state)) continue;
+                    if (!current.CanUseAction(action)) continue;
+
+                    var nextState = ApplyEffects(current.state, action);
+
+                    var child = new Node(current, current.cost + action.cost, nextState, action);
+
+                    if (GoalAchieved(goal, nextState))
+                    {
+                        // Guardamos el más barato que llegue al objetivo
+                        if (cheapestGoal == null || child.cost < cheapestGoal.cost)
+                            cheapestGoal = child;
+                    }
                     else
-                        nextState[eff.Key] += eff.Value;
-                }
-
-                var child = new Node(current, current.cost + action.cost, nextState, action);
-
-                if (GoalAchieved(goal, nextState))
-                {
-                    // Guardamos el más barato que llegue al objetivo
-                    if (cheapestGoal == null || child.cost < cheapestGoal.cost)
-                        cheapestGoal = child;
-                }
-                else
-                {
-                    openSet.Push(child);
+                    {
+                        openSet.Push(child);
+                    }
                 }
             }
         }
@@ -149,6 +145,19 @@ public class GPlanner
             queue.Enqueue(a);
         }
         return queue;
+    }
+
+    private Dictionary<WorldStateDefinition, int> ApplyEffects(Dictionary<WorldStateDefinition, int> currentState, GAction action)
+    {
+        var nextState = new Dictionary<WorldStateDefinition, int>(currentState);
+        foreach (var eff in action.effects)
+        {
+            if (!nextState.ContainsKey(eff.Key))
+                nextState.Add(eff.Key, eff.Value);
+            else
+                nextState[eff.Key] += eff.Value;
+        }
+        return nextState;
     }
 
 

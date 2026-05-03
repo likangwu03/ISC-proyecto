@@ -20,6 +20,7 @@ public class Triage : GAction
 
     public override void Perform()
     {
+        chatBubble.Setup("Howdy", ChatBubble.IconType.TreatingPatient);
         endTime = Time.time + triageDuration;
     }
 
@@ -57,6 +58,8 @@ public class Triage : GAction
 
     public override bool PostPerform()
     {
+        chatBubble.StartFadeOut();
+
         patient.GetComponent<GAgent>().beliefs.SetState(receiveTriage, 1);
         Patient p = patient.GetComponent<Patient>();
         p.SetTriageLevel(GetWeightedRandomLevel());

@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
-
 public class Doctor : GAgent
 {
     private static int nextId = 0;
@@ -20,5 +17,4 @@ public class Doctor : GAgent
         goals.Add(s1, 1);
 
     }
-
 }

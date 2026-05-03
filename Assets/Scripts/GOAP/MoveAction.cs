@@ -6,6 +6,10 @@ public class MoveAction : GAction
     public GameObject target;
     public string targetTag;
 
+    public float duration = 2.0f;
+    private float elapsedTime = 0.0f;
+    private bool reachedTarget = false;
+
     protected NavMeshAgent navAgent;
 
     protected override void Awake()
@@ -32,15 +36,25 @@ public class MoveAction : GAction
 
     public override bool IsDone()
     {
-        if (navAgent.pathPending) return false;
-
-        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
+        if (!reachedTarget)
         {
-            if (!navAgent.hasPath || navAgent.velocity.sqrMagnitude < 0.01f)
-                return true;
-        }
+            if (navAgent.pathPending) return false;
 
-        return false;
+            if (navAgent.remainingDistance <= navAgent.stoppingDistance)
+            {
+                if (!navAgent.hasPath || navAgent.velocity.sqrMagnitude < 0.01f)
+                {
+                    elapsedTime = 0.0f;
+                    reachedTarget = true;
+                }
+            }
+            return false;
+        }
+        else
+        {
+            elapsedTime += Time.deltaTime;
+            return elapsedTime >= duration;
+        }
     }
 
     public override bool PrePerform()
@@ -52,6 +66,4 @@ public class MoveAction : GAction
     {
         MoveToTarget();
     }
-
-
 }

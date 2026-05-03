@@ -1,38 +1,46 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GInventory {
-
+public class GInventory
+{
     public List<GameObject> items = new List<GameObject>();
 
-    public void AddItem(GameObject i) {
-        if(i != null) { items.Add(i);}
+    public void AddItem(GameObject i)
+    {
+        if (i != null)
+        {
+            items.Add(i);
+        }
     }
 
-    public GameObject FindItemWithTag(string tag) {
+    public GameObject FindItemWithTag(string tag)
+    {
 
-        foreach (GameObject i in items) {
+        foreach (GameObject i in items)
+        {
 
-            if (i.tag == tag) {
-
+            if (i.tag == tag)
+            {
                 return i;
             }
         }
         return null;
     }
 
-    public void RemoveItem(GameObject i) {
-
+    public void RemoveItem(GameObject i)
+    {
         int indexToRemove = -1;
 
-        foreach (GameObject g in items) {
-
+        foreach (GameObject g in items)
+        {
             indexToRemove++;
-            if (g == i) {
+            if (g == i)
+            {
                 break;
             }
         }
-        if (indexToRemove >= 0) {
+        if (indexToRemove >= 0)
+        {
             items.RemoveAt(indexToRemove);
         }
     }

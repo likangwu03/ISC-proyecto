@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public abstract class GAction : MonoBehaviour
 {
@@ -26,18 +25,16 @@ public abstract class GAction : MonoBehaviour
     // Estado del agente
     public WorldStates beliefs;
 
-
     public int repeat = 0;
 
-    // Constructor
-    public GAction()
-    {
-        preconditions = new Dictionary<WorldStateDefinition, int>();
-        effects = new Dictionary<WorldStateDefinition, int>();
-    }
+    protected ChatBubble chatBubble;
 
     protected virtual void Awake()
     {
+        preconditions = new Dictionary<WorldStateDefinition, int>();
+        effects = new Dictionary<WorldStateDefinition, int>();
+        chatBubble = GetComponentInChildren<ChatBubble>(true);
+
         if (preConditions != null)
         {
             foreach (WorldState w in preConditions)
@@ -64,25 +61,25 @@ public abstract class GAction : MonoBehaviour
     }
 
     // Comprueba si la acción es realizable dadas las condiciones del mundo y comparándolas con las precondiciones
-    public bool IsAhievableGiven(Dictionary<WorldStateDefinition, int> conditions)
+    public bool IsAchievableGiven(Dictionary<WorldStateDefinition, int> conditions)
     {
-        foreach (KeyValuePair<WorldStateDefinition, int> p in preconditions)
+        foreach (var (key, requiredValue) in preconditions)
         {
 
-            if (conditions.ContainsKey(p.Key))
+            if (conditions.ContainsKey(key))
             {
-                if(p.Value <= 0)
+                if(requiredValue <= 0)
                 {
-                    if (conditions[p.Key] > 0) return false;
+                    if (conditions[key] > 0) return false;
                 }
                 else
                 {
-                    if (conditions[p.Key] < p.Value) return false;
+                    if (conditions[key] < requiredValue) return false;
                 }
             }
             else
             {
-                if(p.Value > 0) {  return false; }
+                if(requiredValue > 0) return false; 
             }
         }
         return true;
