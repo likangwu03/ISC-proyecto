@@ -156,8 +156,6 @@ def modifyValues():
 
                         old_patient = patient_name
                         
-                        print(f"[{cur_relative_time}] Le roban el doctor {free_doc} a {old_patient} para dárselo a {name}")
-                        
                         break
                         
                 if old_patient != "":

@@ -256,7 +256,11 @@ class TelemetryAnalysis(QtCore.QObject):
         
     def finish(self):
 
-        final_time = time.time() * 1000
+        final_time = self.get_relative_time(time.time() * 1000)
+        for doc, pats in self.doctor_patient_time.items():
+            for pat, times in pats.items():
+                if self.patients_data.get(pat) == self.states_list[2]: # "En la consulta"
+                    self.doctor_patient_acum[doc][pat] += final_time - times[-1]
 
         self.update()
 
@@ -313,8 +317,8 @@ class TelemetryAnalysis(QtCore.QObject):
         cur_relative_time = self.get_relative_time(cur_time)
         
         if doctor_name not in self.doctor_patient_time:                     
-                self.doctor_patient_time[doctor_name] = dict()
-                self.doctor_patient_acum[doctor_name] = dict()
+            self.doctor_patient_time[doctor_name] = dict()
+            self.doctor_patient_acum[doctor_name] = dict()
             
         if patient_name not in self.doctor_patient_time[doctor_name]:
             self.doctor_patient_time[doctor_name][patient_name] = list()
@@ -323,10 +327,16 @@ class TelemetryAnalysis(QtCore.QObject):
         if patient_name not in self.patient_assigned_doctors:
             self.patient_assigned_doctors[patient_name] = list()
         
+        if doctor_name not in self.patient_assigned_doctors[patient_name]:
+            self.patient_assigned_doctors[patient_name].append(doctor_name)
+            
         self.doctor_patient_time[doctor_name][patient_name].append(cur_relative_time)
-        patient_last_value = self.doctor_patient_time[doctor_name][patient_name][-2]
         
-        self.doctor_patient_acum[doctor_name][patient_name] += cur_relative_time - patient_last_value
+        if len(self.doctor_patient_time[doctor_name][patient_name])>1:
+            patient_last_value = self.doctor_patient_time[doctor_name][patient_name][-2]
+            self.doctor_patient_acum[doctor_name][patient_name] += cur_relative_time - patient_last_value
+        else:
+            self.doctor_patient_acum[doctor_name][patient_name] = 0
 
 app = FastAPI()
 
@@ -353,7 +363,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 parsed = json.loads(data)
                 
                 if parsed["patients"]:
-                        
+                    
                     telemetryAnalysis.pending_data = parsed
                 
         except WebSocketDisconnect:

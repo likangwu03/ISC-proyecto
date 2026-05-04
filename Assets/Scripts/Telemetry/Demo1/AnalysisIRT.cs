@@ -77,13 +77,8 @@ public class AnalysisIRT : MonoBehaviour
         HospitalInfo patientInfo = patient.HospitalInfo;
 
         if (patientInfo.receptionistStart == -1 || patientInfo.receptionistEnd == -1) return "En la entrada";
-        else if (patientInfo.nurseStart != -1 && patientInfo.nurseEnd == -1) return "En la sala de espera";
-        else
-        {
-            if (patientInfo.doctorStart != -1 && patientInfo.doctorEnd == -1) return "En la consulta";
-            return "En su casa";
-            //TODO: return "En observación";
-               
-        }
+        else if (patientInfo.nurseStart == -1 || patientInfo.nurseEnd == -1 || patientInfo.doctorStart == -1) return "En la sala de espera";
+        else if (patientInfo.doctorStart != -1 && patientInfo.doctorEnd == -1) return "En la consulta";
+        return "En su casa";
     }
 }

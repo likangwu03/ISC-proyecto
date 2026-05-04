@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 st.set_page_config(page_title="Simulación médica: análisis interactivo", layout="wide", page_icon="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2017%2F05%2F15%2F23%2F47%2Fstethoscope-icon-2316460_1280.png&f=1&nofb=1&ipt=26df797828ccbb73935c176641e7f85491ca6af74d8ab1a4bae8f5396bc49b08")
 
 if "timeline_df" not in st.session_state:
-    st.session_state.timeline_df = pd.read_csv("patients_timeline.csv", index_col=0).transpose().fillna("[0]")
+    st.session_state.timeline_df = pd.read_csv("patients_timeline.csv", index_col=0).transpose().fillna("[]")
 
 timeline_df = st.session_state.timeline_df
 
@@ -75,7 +75,11 @@ def str_to_list(series):
         
         lst = new_series.iloc[i]
         new_lst = lst.replace("[", "").replace("]", "").strip().split(",")
-            
+        
+        if new_lst == ['']:
+            new_series.iloc[i] = []
+            continue
+        
         for j in range(len(new_lst)):
             new_lst[j] = float(new_lst[j])
 
@@ -87,7 +91,7 @@ st.image("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.pixaba
 
 with st.container(horizontal=False, vertical_alignment="center"):
     
-    st.markdown("<p style='color:#4dabf7; font-size: 30px; font-weight:bold; font-family: sans-serif; text-align: center; margin-bottom: 40px;'>DASHBOARD INTERACTIVO DE <br> LA SIMULACIÓN</p>",
+    st.markdown("<p style='color:#4dabf7; font-size: 30px; font-weight:bold; font-family: sans-serif; text-align: center; margin-bottom: 20px; transform: translateY(-50px)'>DASHBOARD INTERACTIVO DE <br> LA SIMULACIÓN</p>",
                 unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
@@ -116,6 +120,8 @@ with st.container(horizontal=False, vertical_alignment="center"):
                 "time": times,
                 "state": states
             })
+            
+            df_plot = df_plot.sort_values("time").reset_index(drop=True)
 
             plt.style.use("seaborn-v0_8")
 
@@ -128,16 +134,17 @@ with st.container(horizontal=False, vertical_alignment="center"):
             )
 
             for i in range(len(df_plot) - 1):
-                x = [df_plot["time"][i], df_plot["time"][i+1]]
-                y = [df_plot["state"][i], df_plot["state"][i]]
+                if df_plot["state"][i] == df_plot["state"][i+1]:
+                    x = [df_plot["time"][i], df_plot["time"][i+1]]
+                    y = [df_plot["state"][i], df_plot["state"][i]]
 
-                ax.plot(x, y, color=state_colors[df_plot["state"][i]], linewidth=4)
+                    ax.plot(x, y, color=state_colors[df_plot["state"][i]], linewidth=4)
 
-            for i in range(len(df_plot) - 1):
-                x = df_plot["time"][i+1]
-                y = [df_plot["state"][i], df_plot["state"][i+1]]
+                elif df_plot["state"][i] != df_plot["state"][i+1]:
+                    x = df_plot["time"][i+1]
+                    y = [df_plot["state"][i], df_plot["state"][i+1]]
 
-                ax.plot([x, x], y, color="gray", linewidth=1.5, linestyle="--", alpha=0.6)
+                    ax.plot([x, x], y, color="gray", linewidth=1.5, linestyle="--", alpha=0.6)
 
             ax.set_xlabel("Tiempo (ms)", fontsize=20, labelpad=20)
             ax.set_ylabel("Estado", fontsize=20, labelpad=20)
