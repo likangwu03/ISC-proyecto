@@ -36,12 +36,14 @@ public class TreatPatient : GAction
         if (p == null) return false;
         patient = p.gameObject;
 
+
         patient.GetComponent<ReceiveTreatment>().target = pos;
         patient.GetComponent<ReceiveTreatment>().Perform();
 
         p.HospitalInfo.doctor = gameObject.GetComponent<Doctor>().GetAgentName();
         p.HospitalInfo.doctorStart = Time.time;
 
+        gameObject.GetComponent<LookAtTarget>().paciente = patient.transform;
         return true;
     }
 
@@ -51,6 +53,8 @@ public class TreatPatient : GAction
         GWorld.Instance.GetWorld().ModifyState(internalRoomPatients, -1);
         Patient p = patient.GetComponent<Patient>();
         p.HospitalInfo.doctorEnd = Time.time;
+
+        gameObject.GetComponent<LookAtTarget>().paciente = null;
         return true;
     }
 }

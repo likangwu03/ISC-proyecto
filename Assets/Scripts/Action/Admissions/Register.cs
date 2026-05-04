@@ -42,7 +42,7 @@ public class Register : GAction
 
         patient = GameManager.Instance.GetQueue().Leave(0);
 
-        if(patient == null) return false;
+        if (patient == null) return false;
 
         Patient p = patient.GetComponent<Patient>();
         p.HospitalInfo.receptionist = gameObject.GetComponent<AdmissionsAgent>().GetAgentName();
@@ -51,6 +51,7 @@ public class Register : GAction
         patient.GetComponent<MoveToRegister>().target = pos;
         patient.GetComponent<GAgent>().beliefs.SetState(canRegistered, 1);
 
+        gameObject.GetComponent<LookAtTarget>().paciente = patient.transform;
 
         return true;
     }
@@ -62,6 +63,8 @@ public class Register : GAction
         GameManager.Instance.AddPatient(patient);
         Patient p = patient.GetComponent<Patient>();
         p.HospitalInfo.receptionistEnd = Time.time;
+        gameObject.GetComponent<LookAtTarget>().paciente = null;
+
         return true;
     }
 

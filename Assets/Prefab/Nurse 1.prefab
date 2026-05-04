@@ -1241,6 +1241,7 @@ GameObject:
   - component: {fileID: 1618912320}
   - component: {fileID: 1714314287775095447}
   - component: {fileID: 8804360940707337875}
+  - component: {fileID: 2655542047673888602}
   m_Layer: 0
   m_Name: Nurse 1
   m_TagString: Untagged
@@ -1337,6 +1338,19 @@ MonoBehaviour:
   receiveTriage: {fileID: 11400000, guid: bcdbc97165308064b81abad756c25b4a, type: 2}
   triageDuration: 10
   pos: {fileID: 0}
+--- !u!114 &2655542047673888602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2618188073631541129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff11ebff4bf2cfe4680d31de2b9ef4a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paciente: {fileID: 0}
 --- !u!1 &2629889911763255196
 GameObject:
   m_ObjectHideFlags: 0

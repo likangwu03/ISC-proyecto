@@ -10,7 +10,7 @@ public class ReceiveTriage : MoveAction
     public override bool PrePerform()
     {
         spot = GameManager.Instance.GetWaitingSpot();
-        target = spot;
+        if(target == null) target = spot;
         return true;
     }
 

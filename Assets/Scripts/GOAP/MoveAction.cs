@@ -30,6 +30,8 @@ public class MoveAction : GAction
     {
         if (target != null)
         {
+            reachedTarget = false;
+            elapsedTime = 0.0f;
             navAgent.SetDestination(target.transform.position);
         }
     }

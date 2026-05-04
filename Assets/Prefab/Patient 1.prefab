@@ -3158,7 +3158,7 @@ GameObject:
   - component: {fileID: 6206552696320436402}
   m_Layer: 0
   m_Name: Patient 1
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3253,7 +3253,7 @@ MonoBehaviour:
   repeat: 0
   target: {fileID: 0}
   targetTag: 
-  duration: 2
+  duration: 0
   canRegister: {fileID: 11400000, guid: 47ba7d1a40fb6f745ba874802fa05f8c, type: 2}
 --- !u!114 &1912859631187521346
 MonoBehaviour:
@@ -3278,7 +3278,7 @@ MonoBehaviour:
   repeat: 0
   target: {fileID: 0}
   targetTag: Home
-  duration: 2
+  duration: 0
 --- !u!114 &3593562796362954074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3302,7 +3302,7 @@ MonoBehaviour:
   repeat: 0
   target: {fileID: 0}
   targetTag: 
-  duration: 2
+  duration: 0
   isRegistered: {fileID: 11400000, guid: d4abbd75a58373943a24d37f7158aeaf, type: 2}
 --- !u!114 &8515944962383710736
 MonoBehaviour:
@@ -3327,7 +3327,7 @@ MonoBehaviour:
   repeat: 0
   target: {fileID: 0}
   targetTag: 
-  duration: 2
+  duration: 0
   receiveTriage: {fileID: 11400000, guid: bcdbc97165308064b81abad756c25b4a, type: 2}
 --- !u!114 &6206552696320436402
 MonoBehaviour:
@@ -3352,7 +3352,7 @@ MonoBehaviour:
   repeat: 0
   target: {fileID: 0}
   targetTag: 
-  duration: 2
+  duration: 0
   isTreated: {fileID: 11400000, guid: 4d32f5bcea0f6774fad946368a35f4a9, type: 2}
 --- !u!1 &7927236269272520591
 GameObject:

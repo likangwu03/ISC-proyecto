@@ -8,6 +8,7 @@ TagManager:
   - Doctor
   - Register
   - Home
+  - Door
   layers:
   - Default
   - TransparentFX
