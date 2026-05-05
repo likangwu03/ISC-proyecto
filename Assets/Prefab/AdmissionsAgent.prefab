@@ -979,7 +979,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actions: []
   currentAction: {fileID: 0}
-  patientRegistration: {fileID: 11400000, guid: c2bbe58bc723daa4d91c96077d245b80, type: 2}
+  patientRegistration:
+    key: Register
+    isBelief: 1
 --- !u!114 &2333314440173040045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -997,11 +999,19 @@ MonoBehaviour:
   preConditions: []
   afterEffects:
   - value: 1
-    def: {fileID: 11400000, guid: c2bbe58bc723daa4d91c96077d245b80, type: 2}
+    def:
+      key: Register
+      isBelief: 1
   repeat: 0
-  isRegistered: {fileID: 11400000, guid: d4abbd75a58373943a24d37f7158aeaf, type: 2}
-  canRegistered: {fileID: 11400000, guid: 47ba7d1a40fb6f745ba874802fa05f8c, type: 2}
-  internalRoomPatients: {fileID: 11400000, guid: 2e9fb10b6da538f4bacc8f7a7d9e2048, type: 2}
+  isRegistered:
+    key: hasRegister
+    isBelief: 1
+  canRegistered:
+    key: canRegister
+    isBelief: 1
+  internalRoomPatients:
+    key: internalRoom
+    isBelief: 0
   registrationDuration: 10
   pos: {fileID: 0}
 --- !u!114 &2257438570155271648

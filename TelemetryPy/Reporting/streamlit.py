@@ -69,7 +69,7 @@ doctors_time_priority = st.session_state.doctors_time_priority
 
 def str_to_list(series):
     
-    new_series = series.copy()
+    new_series = series.astype(object).copy()
     
     for i in range(len(new_series)):
         
@@ -77,15 +77,34 @@ def str_to_list(series):
         new_lst = lst.replace("[", "").replace("]", "").strip().split(",")
         
         if new_lst == ['']:
-            new_series.iloc[i] = []
+            new_series.iat[i] = []
             continue
         
         for j in range(len(new_lst)):
             new_lst[j] = float(new_lst[j])
 
-        new_series.iloc[i] = new_lst
+        new_series.iat[i] = new_lst
         
     return new_series
+
+# def str_to_list(series):
+    
+#     new_series = series.copy()
+    
+#     for i in range(len(new_series)):
+        
+#         lst = new_series.iloc[i]
+#         new_lst = lst.replace("[", "").replace("]", "").strip().split(",")
+        
+#         if new_lst == ['']:
+#             new_series.iloc[i] = []
+#             continue
+        
+#         for j in range(len(new_lst)):
+#             new_lst[j] = float(new_lst[j])
+
+#         new_series.iloc[i] = new_lst
+#     return new_series
 
 st.image("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2017%2F05%2F15%2F23%2F47%2Fstethoscope-icon-2316460_1280.png&f=1&nofb=1&ipt=26df797828ccbb73935c176641e7f85491ca6af74d8ab1a4bae8f5396bc49b08", "", 50)
 

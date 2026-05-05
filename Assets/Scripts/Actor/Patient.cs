@@ -95,5 +95,5 @@ public class Patient : GAgent
     public string GetPatientName() { return this.patientName; }
     public void SetPatientName(string name) { patientName = name; }
 
-    public bool IsHome() { return isHome; }
+    //public bool IsHome() { return isHome; }
 }

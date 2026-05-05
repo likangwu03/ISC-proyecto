@@ -17,12 +17,14 @@ for p in range(len(simulation_df.index)):
     patient = simulation_df.iloc[p].copy()
     patient_name = simulation_df.index[p]
 
-    for i in range(len(patient)):           # String list to float conversion
+    patient = patient.apply(lambda x: [float(v) for v in x.replace("[", "").replace("]", "").split(",")])
+
+    # for i in range(len(patient)):           # String list to float conversion
         
-        patient.iloc[i] = patient.iloc[i].replace("[", "").replace("]", "").strip().split(",")
+    #     patient.iloc[i] = patient.iloc[i].replace("[", "").replace("]", "").strip().split(",")
         
-        for j in range(len(patient.iloc[i])):
-            patient.iloc[i][j] = float(patient.iloc[i][j])
+    #     for j in range(len(patient.iloc[i])):
+    #         patient.iloc[i][j] = float(patient.iloc[i][j])
 
     patient_index_list = {i: 0 for i in range(len(states_list))}
     acum_state_index = {i: 0 for i in range(len(states_list))}

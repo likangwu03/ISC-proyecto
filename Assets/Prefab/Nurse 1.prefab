@@ -1315,7 +1315,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actions: []
   currentAction: {fileID: 0}
-  triage: {fileID: 11400000, guid: c943afe2d144ea64f88831382fbf50ff, type: 2}
+  triage:
+    key: Triage
+    isBelief: 1
 --- !u!114 &8804360940707337875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1333,9 +1335,13 @@ MonoBehaviour:
   preConditions: []
   afterEffects:
   - value: 1
-    def: {fileID: 11400000, guid: c943afe2d144ea64f88831382fbf50ff, type: 2}
+    def:
+      key: Triage
+      isBelief: 1
   repeat: 0
-  receiveTriage: {fileID: 11400000, guid: bcdbc97165308064b81abad756c25b4a, type: 2}
+  receiveTriage:
+    key: receiveTriage
+    isBelief: 1
   triageDuration: 10
   pos: {fileID: 0}
 --- !u!114 &2655542047673888602
@@ -1351,6 +1357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paciente: {fileID: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &2629889911763255196
 GameObject:
   m_ObjectHideFlags: 0

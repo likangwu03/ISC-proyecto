@@ -1,21 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(fileName = "WorldStateDefinition", menuName = "GOAP/World State Definition")]
-public class WorldStateDefinition : ScriptableObject
+[System.Serializable]
+public class WorldStateDefinition : IEquatable<WorldStateDefinition>
 {
     public string key;
     public bool isBelief;
 
     public override bool Equals(object obj)
     {
-        if (obj is WorldStateDefinition other)
-            return key == other.key;
-        return false;
+        return Equals(obj as WorldStateDefinition);
     }
 
-    public override int GetHashCode() => key != null ? key.GetHashCode() : 0;
+    public bool Equals(WorldStateDefinition other)
+    {
+        if (other is null)
+            return false;
+
+        return key == other.key;
+    }
+
+    public override int GetHashCode()
+    {
+        return key?.GetHashCode() ?? 0;
+    }
 }
 
 [System.Serializable]
