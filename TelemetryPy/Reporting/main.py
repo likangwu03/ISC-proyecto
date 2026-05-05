@@ -7,7 +7,7 @@ import pyqtgraph as pg
 
 class TelemetryAnalysis(QtCore.QObject):
     
-    update_signal = QtCore.pyqtSignal()
+    update_signal = QtCore.Signal()
     
     def __init__(self):
         
@@ -374,6 +374,7 @@ def run_api():
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False, workers=1)
 
 if __name__ == "__main__":
+    print("Hello world!")
     
     qt_app = QtWidgets.QApplication([])
     
