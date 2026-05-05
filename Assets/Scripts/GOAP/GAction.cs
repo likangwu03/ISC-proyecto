@@ -16,6 +16,8 @@ public abstract class GAction : MonoBehaviour
     protected WorldState[] afterEffects;
 
     // Diccionario de precondiciones
+    // <=0 = negativo (no se tiene que cumplir la condicion)
+    // >0 = cumplir la condicion un numero de veces
     public Dictionary<WorldStateDefinition, int> preconditions;
     // Diccionario de efectos
     public Dictionary<WorldStateDefinition, int> effects;

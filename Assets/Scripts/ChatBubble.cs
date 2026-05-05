@@ -73,7 +73,7 @@ public class ChatBubble : MonoBehaviour
         else
         {
             canvasGroup.alpha = 1f;
-            fadeState = FadeState.Idle;
+            fadeState = FadeState.Typing;
         }
 
         // Se lanza una corrutina porque sino el tamano del texto no se cacula bien al activar el GameObject en el mismo frame
