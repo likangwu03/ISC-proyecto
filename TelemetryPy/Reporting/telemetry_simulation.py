@@ -47,7 +47,7 @@ patients_priority = {
 states_list = [
     "En la entrada",
     "En la sala de espera",
-    "En tratamiento",
+    "En la consulta",
     "En su casa"
 ]
 
