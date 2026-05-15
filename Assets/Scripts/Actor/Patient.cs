@@ -64,6 +64,18 @@ public class Patient : GAgent
         set => hospitalInfo = value;
     }
 
+    private DateTime nextCheckTime;
+
+    public void SetObservationTimer(float seconds)
+    {
+        nextCheckTime = DateTime.Now.AddSeconds(seconds);
+    }
+
+    public bool HasTimeArrived()
+    {
+        return DateTime.Now >= nextCheckTime;
+    }
+
     public override void Start()
     {
         base.Start();

@@ -15,14 +15,21 @@ public class GameManager : MonoBehaviour
 
     private Queue<GameObject> waitingSpots = new();
 
+    private Queue<GameObject> beds = new();
+
     public int maxInternalRoomPatients = 5;
 
     private List<Patient> patientList;
+
+    private Queue<GameObject> observations = new();
 
     [SerializeField]
     private WorldStateDefinition WaitingSpot;
     [SerializeField]
     private WorldStateDefinition Doctor;
+    [SerializeField]
+    private WorldStateDefinition NumBeds;
+
 
     private Dictionary<string,HospitalInfo> hospitalInfoDic =new();
 
@@ -57,7 +64,19 @@ public class GameManager : MonoBehaviour
         }
         if (ListWaitingAreas.Length > 0)
         {
-            GWorld.Instance.GetWorld().ModifyState(WaitingSpot, ListWaitingAreas.Length);
+            GWorld.Instance.GetWorld().SetState(WaitingSpot, ListWaitingAreas.Length);
+        }
+
+
+        GameObject[] ListBeds = GameObject.FindGameObjectsWithTag("bed");
+        foreach (GameObject c in ListBeds)
+        {
+            beds.Enqueue(c);
+        }
+
+        if (ListBeds.Length > 0)
+        {
+            GWorld.Instance.GetWorld().SetState(NumBeds, ListBeds.Length);
         }
     }
 
@@ -80,12 +99,40 @@ public class GameManager : MonoBehaviour
     public void AddWaitingSpot(GameObject d)
     {
         waitingSpots.Enqueue(d);
+        GWorld.Instance.GetWorld().ModifyState(WaitingSpot, 1);
     }
 
     public GameObject GetWaitingSpot()
     {
         if (waitingSpots.Count == 0) return null;
+        GWorld.Instance.GetWorld().ModifyState(WaitingSpot, -1);
         return waitingSpots.Dequeue();
+    }
+
+    public void AddBed(GameObject bed)
+    {
+        GWorld.Instance.GetWorld().ModifyState(NumBeds, 1);
+        beds.Enqueue(bed);
+    }
+
+    public GameObject GetBed()
+    {
+        if (beds.Count == 0) return null;
+        GWorld.Instance.GetWorld().ModifyState(NumBeds, -1);
+        return beds.Dequeue();
+    }
+
+    public void AddObservation(GameObject patient)
+    {
+        observations.Enqueue(patient);
+    }
+
+    public GameObject GetNextObservation()
+    {
+        if (observations.Count == 0)
+            return null;
+
+        return observations.Dequeue();
     }
 
     public DynamicQueueLayout GetQueue() { return queue; }
@@ -95,6 +142,7 @@ public class GameManager : MonoBehaviour
     {
         triagedPatientsQueue.Push(new PriorityActor(p));
     }
+
     public Patient GetNextTriagedPatient()
     {
         if (triagedPatientsQueue.Count == 0) return null;

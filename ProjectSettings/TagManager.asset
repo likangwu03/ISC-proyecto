@@ -9,6 +9,7 @@ TagManager:
   - Register
   - Home
   - Door
+  - bed
   layers:
   - Default
   - TransparentFX

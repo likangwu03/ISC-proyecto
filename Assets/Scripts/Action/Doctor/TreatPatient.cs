@@ -10,6 +10,8 @@ public class TreatPatient : GAction
     [SerializeField]
     private WorldStateDefinition internalRoomPatients;
     [SerializeField]
+    private WorldStateDefinition toBed;
+    [SerializeField]
     private float TreatDuration = 10.0f;
 
     private GameObject patient;
@@ -50,9 +52,16 @@ public class TreatPatient : GAction
     public override bool PostPerform()
     {
         patient.GetComponent<GAgent>().beliefs.SetState(isTreated, 1);
-        GWorld.Instance.GetWorld().ModifyState(internalRoomPatients, -1);
         Patient p = patient.GetComponent<Patient>();
         p.HospitalInfo.doctorEnd = Time.time;
+
+        if (Random.value > -1)
+        {
+            p.beliefs.SetState(toBed, 1);
+            p.SetObservationTimer(10);
+        }
+        else GWorld.Instance.GetWorld().ModifyState(internalRoomPatients, -1);
+
 
         gameObject.GetComponent<LookAtTarget>().paciente = null;
         return true;

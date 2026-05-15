@@ -3156,6 +3156,8 @@ GameObject:
   - component: {fileID: 3593562796362954074}
   - component: {fileID: 8515944962383710736}
   - component: {fileID: 6206552696320436402}
+  - component: {fileID: 1486245250670795655}
+  - component: {fileID: 1410360639681945487}
   m_Layer: 0
   m_Name: Patient 1
   m_TagString: Player
@@ -3282,6 +3284,10 @@ MonoBehaviour:
     def:
       key: isTreater
       isBelief: 1
+  - value: 0
+    def:
+      key: ToBed
+      isBelief: 1
   afterEffects:
   - value: 1
     def:
@@ -3384,6 +3390,67 @@ MonoBehaviour:
   isTreated:
     key: isTreater
     isBelief: 1
+--- !u!114 &1486245250670795655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881807149238628900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2b126d095d44824ea10dca6573b1e43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Action
+  cost: 1
+  preConditions:
+  - value: 1
+    def:
+      key: NumBeds
+      isBelief: 0
+  - value: 1
+    def:
+      key: ToBed
+      isBelief: 1
+  afterEffects:
+  - value: -1
+    def:
+      key: ToBed
+      isBelief: 1
+  repeat: 0
+  target: {fileID: 0}
+  targetTag: 
+  duration: 2
+  internalRoomPatients:
+    key: internalRoom
+    isBelief: 0
+  toBed:
+    key: ToBed
+    isBelief: 1
+--- !u!114 &1410360639681945487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881807149238628900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10d4a4bece82e5646bcff3c771964891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Action
+  cost: 1
+  preConditions: []
+  afterEffects: []
+  repeat: 0
+  target: {fileID: 0}
+  targetTag: 
+  duration: 2
+  NumBeds:
+    key: NumBeds
+    isBelief: 0
 --- !u!1 &7927236269272520591
 GameObject:
   m_ObjectHideFlags: 0
